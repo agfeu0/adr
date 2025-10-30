@@ -22,13 +22,20 @@ public class StreamerCommand implements CommandExecutor {
             return false;
         }
 
+        Player player = (Player) sender;
+
+        // OP만 사용 가능
+        if (!player.isOp()) {
+            player.sendMessage(ChatColor.RED + "이 명령어는 OP만 사용 가능합니다.");
+            return false;
+        }
+
         if (args.length != 1) {
             sender.sendMessage(ChatColor.RED + "사용법: /스트리머 <닉네임>");
             return false;
         }
 
         String streamerName = args[0];
-        Player player = (Player) sender;
 
         // 이미 스트리머가 존재하는지 확인
         if (teamManager.getTeamByStreamer(streamerName) != null) {
