@@ -25,10 +25,25 @@ public class TeamSelectCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        // 스트리머인 경우 사용 불가
+        if (isStreamer(player)) {
+            player.sendMessage(ChatColor.RED + "스트리머는 이 명령어를 사용할 수 없습니다.");
+            return false;
+        }
+
         // 팀 선택 GUI 열기
         TeamSelectGUI gui = new TeamSelectGUI(teamManager);
         gui.openGUI(player);
 
         return true;
+    }
+
+    private boolean isStreamer(Player player) {
+        for (String streamerName : teamManager.getStreamerNames()) {
+            if (streamerName.equals(player.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
