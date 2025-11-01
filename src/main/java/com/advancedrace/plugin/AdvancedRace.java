@@ -21,6 +21,7 @@ import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
 import com.advancedrace.plugin.task.DistanceLimitTask;
+import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AdvancedRace extends JavaPlugin {
@@ -50,10 +51,15 @@ public class AdvancedRace extends JavaPlugin {
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
 
-        // 로드 후 플레이어 디스플레이 업데이트 (1틱 지연)
+        // 로드 후 플레이어 디스플레이 및 나침반 업데이트 (1틱 지연)
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
             for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
                 PlayerNameListener.updatePlayerDisplay(player, teamManager);
+                // 플레이어가 팀에 속하면 나침반 업데이트
+                TeamManager.Team team = teamManager.getTeam(player);
+                if (team != null) {
+                    ViewerInitializer.updateCompass(player, team.getStreamer());
+                }
             }
         }, 1);
 

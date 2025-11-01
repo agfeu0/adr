@@ -85,12 +85,22 @@ public class ViewerInitializer {
         }
 
         ItemStack item = player.getInventory().getItem(4);
-        if (item != null && item.getType() == Material.COMPASS && item.getItemMeta() instanceof CompassMeta) {
-            CompassMeta meta = (CompassMeta) item.getItemMeta();
-            meta.setDisplayName("§b" + streamerName + " 팀장");
-            meta.setLodestone(streamer.getLocation());
-            meta.setLodestoneTracked(true);
-            item.setItemMeta(meta);
+        if (item == null || item.getType() != Material.COMPASS) {
+            return;
         }
+
+        if (!(item.getItemMeta() instanceof CompassMeta)) {
+            return;
+        }
+
+        CompassMeta meta = (CompassMeta) item.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        meta.setDisplayName("§b" + streamerName + " 팀장");
+        meta.setLodestone(streamer.getLocation());
+        meta.setLodestoneTracked(true);
+        item.setItemMeta(meta);
     }
 }
