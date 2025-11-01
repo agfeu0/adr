@@ -1,5 +1,7 @@
 package com.advancedrace.plugin;
 
+import com.advancedrace.plugin.command.GameEndCommand;
+import com.advancedrace.plugin.command.GameStartCommand;
 import com.advancedrace.plugin.command.StreamerCommand;
 import com.advancedrace.plugin.command.TeamSelectCommand;
 import com.advancedrace.plugin.command.TeleportCommand;
@@ -14,6 +16,8 @@ import com.advancedrace.plugin.listener.PlayerNameListener;
 import com.advancedrace.plugin.listener.PvPListener;
 import com.advancedrace.plugin.listener.StreamerDeathListener;
 import com.advancedrace.plugin.manager.AdvancementManager;
+import com.advancedrace.plugin.manager.DataPersistence;
+import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
 import com.advancedrace.plugin.task.DistanceLimitTask;
@@ -25,6 +29,7 @@ public class AdvancedRace extends JavaPlugin {
     private TeamManager teamManager;
     private AdvancementManager advancementManager;
     private ViewerSummonManager viewerSummonManager;
+    private GameStateManager gameStateManager;
 
     @Override
     public void onEnable() {
@@ -39,12 +44,20 @@ public class AdvancedRace extends JavaPlugin {
         // 시청자 소환 매니저 초기화
         viewerSummonManager = new ViewerSummonManager(teamManager);
 
+        // 게임 상태 매니저 초기화
+        gameStateManager = new GameStateManager();
+
+        // 저장된 게임 데이터 로드 시도
+        DataPersistence.loadGameData(teamManager);
+
         // 명령어 등록
         StreamerCommand streamerCommand = new StreamerCommand(teamManager);
         getCommand("스트리머").setExecutor(streamerCommand);
         getCommand("스트리머").setTabCompleter(streamerCommand);
         getCommand("팀선택").setExecutor(new TeamSelectCommand(teamManager));
         getCommand("발전과제_tp").setExecutor(new TeleportCommand());
+        getCommand("시작").setExecutor(new GameStartCommand(gameStateManager, teamManager));
+        getCommand("종료").setExecutor(new GameEndCommand(gameStateManager, teamManager));
 
         // 이벤트 리스너 등록
         getServer().getPluginManager().registerEvents(new BeaconListener(teamManager), this);

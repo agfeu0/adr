@@ -1,0 +1,133 @@
+package com.advancedrace.plugin.manager;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
+public class DataPersistence {
+
+    private static final String DATA_FOLDER = "plugins/AdvancedRace";
+    private static final String SAVE_FILE = "game_data.json";
+    private static final Gson gson = new GsonBuilder().create();
+
+    /**
+     * 게임 상태를 JSON 파일로 저장
+     */
+    public static void saveGameData(TeamManager teamManager) {
+        try {
+            File folder = new File(DATA_FOLDER);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+
+            JsonObject root = new JsonObject();
+
+            // 팀 정보 저장
+            JsonArray teamsArray = new JsonArray();
+            for (String streamerName : teamManager.getStreamerNames()) {
+                TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+                if (team != null) {
+                    JsonObject teamObj = new JsonObject();
+                    teamObj.addProperty("streamer", streamerName);
+                    teamObj.addProperty("color", team.getColor());
+
+                    // 팀원 정보 저장
+                    JsonArray playersArray = new JsonArray();
+                    for (Player player : team.getPlayers()) {
+                        playersArray.add(player.getName());
+                    }
+                    teamObj.add("players", playersArray);
+
+                    teamsArray.add(teamObj);
+                }
+            }
+            root.add("teams", teamsArray);
+
+            // JSON 파일에 저장
+            try (FileWriter writer = new FileWriter(saveFile)) {
+                gson.toJson(root, writer);
+            }
+
+            Bukkit.getLogger().info("[AdvancedRace] 게임 데이터 저장 완료: " + saveFile.getAbsolutePath());
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 저장 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * JSON 파일에서 게임 상태를 로드
+     */
+    public static void loadGameData(TeamManager teamManager) {
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+
+            if (!saveFile.exists()) {
+                Bukkit.getLogger().info("[AdvancedRace] 저장된 게임 데이터가 없습니다.");
+                return;
+            }
+
+            try (FileReader reader = new FileReader(saveFile)) {
+                JsonObject root = gson.fromJson(reader, JsonObject.class);
+
+                if (root == null || !root.has("teams")) {
+                    return;
+                }
+
+                JsonArray teamsArray = root.getAsJsonArray("teams");
+
+                // 팀 정보 로드
+                for (int i = 0; i < teamsArray.size(); i++) {
+                    JsonObject teamObj = teamsArray.get(i).getAsJsonObject();
+                    String streamerName = teamObj.get("streamer").getAsString();
+                    String color = teamObj.get("color").getAsString();
+
+                    // 팀 생성
+                    teamManager.createTeam(streamerName, color);
+
+                    // 플레이어 추가
+                    JsonArray playersArray = teamObj.getAsJsonArray("players");
+                    for (int j = 0; j < playersArray.size(); j++) {
+                        String playerName = playersArray.get(j).getAsString();
+                        Player player = Bukkit.getPlayer(playerName);
+                        if (player != null) {
+                            teamManager.addPlayerToTeam(player, streamerName);
+                        }
+                    }
+                }
+
+                Bukkit.getLogger().info("[AdvancedRace] 게임 데이터 로드 완료");
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 로드 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 저장된 게임 데이터 삭제
+     */
+    public static void deleteGameData() {
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+            if (saveFile.exists()) {
+                saveFile.delete();
+                Bukkit.getLogger().info("[AdvancedRace] 게임 데이터 삭제 완료");
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 삭제 실패: " + e.getMessage());
+        }
+    }
+}

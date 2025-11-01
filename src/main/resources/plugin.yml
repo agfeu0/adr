@@ -8,13 +8,19 @@ api-version: 1.13
 commands:
   스트리머:
     description: 스트리머(팀장) 등록
-    usage: /스트리머 <닉네임>
+    usage: /스트리머 <닉네임> [색깔]
   팀선택:
     description: 팀 선택 GUI 열기
     usage: /팀선택
   발전과제_tp:
     description: 신호기 위치로 텔레포트
     usage: /발전과제_tp <스트리머이름>
+  시작:
+    description: 게임 시작
+    usage: /시작
+  종료:
+    description: 게임 종료
+    usage: /종료
 
 permissions:
   advancedrace.command.streamer:
