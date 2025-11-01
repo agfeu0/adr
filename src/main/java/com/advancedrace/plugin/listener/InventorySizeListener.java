@@ -1,12 +1,14 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class InventorySizeListener implements Listener {
@@ -69,6 +71,28 @@ public class InventorySizeListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+
+        // OP나 스트리머는 제한 없음
+        if (player.isOp() || isStreamer(player)) {
+            return;
+        }
+
+        // 시청자인지 확인
+        if (teamManager.getPlayerTeam(player) == null) {
+            return;
+        }
+
+        // 나침반이 버려지려고 하면 방지
+        if (event.getItemDrop().getItemStack().getType() == Material.COMPASS) {
+            event.setCancelled(true);
+            // 나침반을 다시 인벤토리에 추가
+            ViewerInitializer.setCompassSlot5(player);
         }
     }
 

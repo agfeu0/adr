@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ViewerInitializer {
@@ -41,16 +42,6 @@ public class ViewerInitializer {
         for (int i = 5; i < 36; i++) {
             player.getInventory().setItem(i, barrier.clone());
         }
-
-        // 갑옷 슬롯 베리어로 막기
-        ItemStack[] armorContents = new ItemStack[4];
-        for (int i = 0; i < 4; i++) {
-            armorContents[i] = barrier.clone();
-        }
-        player.getInventory().setArmorContents(armorContents);
-
-        // 오프손 베리어로 막기
-        player.getInventory().setItemInOffHand(barrier.clone());
     }
 
     /**
@@ -76,8 +67,8 @@ public class ViewerInitializer {
      */
     public static void setCompassSlot5(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
-        ItemMeta meta = compass.getItemMeta();
-        if (meta != null) {
+        if (compass.getItemMeta() instanceof CompassMeta) {
+            CompassMeta meta = (CompassMeta) compass.getItemMeta();
             meta.setDisplayName("§b팀장 위치");
             compass.setItemMeta(meta);
         }
@@ -88,13 +79,18 @@ public class ViewerInitializer {
      * 플레이어의 현재 팀의 스트리머를 가리키도록 나침반 업데이트
      */
     public static void updateCompass(Player player, String streamerName) {
+        Player streamer = Bukkit.getPlayer(streamerName);
+        if (streamer == null) {
+            return;
+        }
+
         ItemStack item = player.getInventory().getItem(4);
-        if (item != null && item.getType() == Material.COMPASS) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName("§b" + streamerName + " 팀장");
-                item.setItemMeta(meta);
-            }
+        if (item != null && item.getType() == Material.COMPASS && item.getItemMeta() instanceof CompassMeta) {
+            CompassMeta meta = (CompassMeta) item.getItemMeta();
+            meta.setDisplayName("§b" + streamerName + " 팀장");
+            meta.setLodestone(streamer.getLocation());
+            meta.setLodestoneTracked(true);
+            item.setItemMeta(meta);
         }
     }
 }
