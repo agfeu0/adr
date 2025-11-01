@@ -59,12 +59,28 @@ public class AdvancedRace extends JavaPlugin {
 
         // 명령어 등록
         StreamerCommand streamerCommand = new StreamerCommand(teamManager);
-        getCommand("스트리머").setExecutor(streamerCommand);
-        getCommand("스트리머").setTabCompleter(streamerCommand);
-        getCommand("팀선택").setExecutor(new TeamSelectCommand(teamManager));
-        getCommand("발전과제_tp").setExecutor(new TeleportCommand());
-        getCommand("시작").setExecutor(new GameStartCommand(gameStateManager, teamManager));
-        getCommand("종료").setExecutor(new GameEndCommand(gameStateManager, teamManager));
+        if (getCommand("스트리머") != null) {
+            getCommand("스트리머").setExecutor(streamerCommand);
+            getCommand("스트리머").setTabCompleter(streamerCommand);
+        }
+        if (getCommand("팀선택") != null) {
+            getCommand("팀선택").setExecutor(new TeamSelectCommand(teamManager));
+        }
+        if (getCommand("발전과제_tp") != null) {
+            getCommand("발전과제_tp").setExecutor(new TeleportCommand());
+        }
+        if (getCommand("시작") != null) {
+            getCommand("시작").setExecutor(new GameStartCommand(gameStateManager, teamManager));
+            getLogger().info("[AdvancedRace] /시작 명령어 등록됨");
+        } else {
+            getLogger().warning("[AdvancedRace] /시작 명령어를 찾을 수 없습니다!");
+        }
+        if (getCommand("종료") != null) {
+            getCommand("종료").setExecutor(new GameEndCommand(gameStateManager, teamManager));
+            getLogger().info("[AdvancedRace] /종료 명령어 등록됨");
+        } else {
+            getLogger().warning("[AdvancedRace] /종료 명령어를 찾을 수 없습니다!");
+        }
 
         // 이벤트 리스너 등록
         getServer().getPluginManager().registerEvents(new BeaconListener(teamManager), this);
