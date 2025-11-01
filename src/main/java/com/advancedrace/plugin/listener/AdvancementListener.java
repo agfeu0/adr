@@ -54,13 +54,14 @@ public class AdvancementListener implements Listener {
         // 시청자 소환
         int summoned = viewerSummonManager.summonViewers(player.getName(), summonCount);
 
-        // 브로드캐스트
+        // 발전과제 달성 공지 (모두에게)
+        Bukkit.broadcastMessage(ChatColor.YELLOW + player.getName() + "님이 발전과제를 달성했습니다!");
+
+        // 소환 결과는 스트리머한테만
         if (summoned > 0) {
-            Bukkit.broadcastMessage(ChatColor.YELLOW + player.getName() + "님이 발전과제를 달성했습니다!");
-            Bukkit.broadcastMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
+            player.sendMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
         } else {
-            Bukkit.broadcastMessage(ChatColor.YELLOW + player.getName() + "님이 발전과제를 달성했습니다!");
-            Bukkit.broadcastMessage(ChatColor.RED + "→ 소환할 대기 중인 시청자가 없습니다.");
+            player.sendMessage(ChatColor.RED + "→ 소환할 대기 중인 시청자가 없습니다.");
         }
     }
 
