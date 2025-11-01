@@ -33,8 +33,8 @@ public class ViewerInitializer {
      * 인벤토리를 5칸만 사용 가능하도록 제한
      */
     private static void clearInventoryExcept5Slots(Player player) {
-        // 0~4번 슬롯만 유지, 5~44번 슬롯 비우기
-        for (int i = 5; i < 45; i++) {
+        // 0~4번 슬롯만 유지, 5~35번 슬롯 비우기 (총 36칸의 인벤토리)
+        for (int i = 5; i < 36; i++) {
             player.getInventory().setItem(i, null);
         }
         // 갑옷 슬롯 비우기
