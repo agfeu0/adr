@@ -3,7 +3,6 @@ package com.advancedrace.plugin.listener;
 import com.advancedrace.plugin.manager.AdvancementManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.entity.Player;
@@ -53,9 +52,6 @@ public class AdvancementListener implements Listener {
 
         // 시청자 소환
         int summoned = viewerSummonManager.summonViewers(player.getName(), summonCount);
-
-        // 발전과제 달성 공지 (모두에게)
-        Bukkit.broadcastMessage(ChatColor.YELLOW + player.getName() + "님이 발전과제를 달성했습니다!");
 
         // 소환 결과는 스트리머한테만
         if (summoned > 0) {
