@@ -3,6 +3,7 @@ version: 1.0.0
 description: 발전과제 데스런 플러그인
 author: Admin
 main: com.advancedrace.plugin.AdvancedRace
+api-version: 1.13
 
 commands:
   스트리머:
