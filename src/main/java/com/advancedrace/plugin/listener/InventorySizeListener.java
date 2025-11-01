@@ -1,10 +1,12 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 public class InventorySizeListener implements Listener {
@@ -29,6 +31,12 @@ public class InventorySizeListener implements Listener {
             return;
         }
 
+        // 베리어 아이템 클릭 방지
+        if (event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.BARRIER) {
+            event.setCancelled(true);
+            return;
+        }
+
         // 5번 슬롯(인덱스 4)을 클릭했으면 취소
         if (event.getSlot() == 4) {
             event.setCancelled(true);
@@ -38,6 +46,29 @@ public class InventorySizeListener implements Listener {
         // 5칸 이상을 클릭했으면 취소
         if (event.getSlot() >= 5) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        Player player = (Player) event.getWhoClicked();
+
+        // OP나 스트리머는 제한 없음
+        if (player.isOp() || isStreamer(player)) {
+            return;
+        }
+
+        // 시청자인지 확인
+        if (teamManager.getPlayerTeam(player) == null) {
+            return;
+        }
+
+        // 드래그로 베리어 슬롯에 접근하려는 것 방지
+        for (int slot : event.getRawSlots()) {
+            if (slot >= 5 && slot < 40) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 
