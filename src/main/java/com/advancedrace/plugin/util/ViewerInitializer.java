@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -63,12 +64,11 @@ public class ViewerInitializer {
     }
 
     /**
-     * 플레이어 크기를 0.7로 축소
-     * Paper 1.21.10에서는 직접 API 지원이 없어 추후 구현 예정
-     * (데이터팩, Reflection, 또는 PersistentDataContainer 사용)
+     * 플레이어 크기를 0.5로 축소
      */
     private static void setScaleSmall(Player player) {
-        // 구현 예정
+        String command = "attribute " + player.getName() + " minecraft:scale base set 0.5";
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
     /**
