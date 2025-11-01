@@ -64,11 +64,11 @@ public class ViewerInitializer {
 
     /**
      * 플레이어 크기를 0.7로 축소
-     * Paper 1.21.1에서는 직접 지원하지 않으므로 추후 구현 예정
+     * Paper 1.21.10에서는 직접 API 지원이 없어 추후 구현 예정
+     * (데이터팩, Reflection, 또는 PersistentDataContainer 사용)
      */
     private static void setScaleSmall(Player player) {
-        // Paper 1.21.1에서는 scale 직접 설정이 없음
-        // 추후 데이터팩이나 다른 방식으로 구현 필요
+        // 구현 예정
     }
 
     /**
