@@ -131,7 +131,7 @@ public class TeamManager {
         }
 
         private static String getRandomColor() {
-            String[] colors = {"§c", "§6", "§e", "§a", "§b", "§9", "§d"};
+            String[] colors = {"§c", "§6", "§e", "§2", "§a", "§1", "§b", "§5", "§d", "§7", "§0", "§f"};
             return colors[(int) (Math.random() * colors.length)];
         }
 

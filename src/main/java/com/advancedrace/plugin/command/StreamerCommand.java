@@ -42,7 +42,7 @@ public class StreamerCommand implements CommandExecutor {
         if (args.length == 2) {
             colorCode = getColorCode(args[1]);
             if (colorCode == null) {
-                player.sendMessage(ChatColor.RED + "지원하는 색깔: red(빨강), gold(금색), yellow(노랑), green(초록), aqua(하늘), blue(파랑), light_purple(자주)");
+                player.sendMessage(ChatColor.RED + "지원하는 색깔: red(빨강), orange(주황), yellow(노랑), dark_green(초록), green(연두), dark_blue(파랑), light_blue(하늘), dark_purple(보라), magenta(분홍), gray(회색), black(검정), white(하양)");
                 return false;
             }
         }
@@ -68,12 +68,17 @@ public class StreamerCommand implements CommandExecutor {
     private String getColorCode(String colorName) {
         return switch (colorName.toLowerCase()) {
             case "red" -> "§c";
-            case "gold" -> "§6";
+            case "orange" -> "§6";
             case "yellow" -> "§e";
+            case "dark_green" -> "§2";
             case "green" -> "§a";
-            case "aqua" -> "§b";
-            case "blue" -> "§9";
-            case "light_purple" -> "§d";
+            case "dark_blue" -> "§1";
+            case "light_blue" -> "§b";
+            case "dark_purple" -> "§5";
+            case "magenta" -> "§d";
+            case "gray" -> "§7";
+            case "black" -> "§0";
+            case "white" -> "§f";
             default -> null;
         };
     }
@@ -81,12 +86,17 @@ public class StreamerCommand implements CommandExecutor {
     private String getColorName(String colorCode) {
         return switch (colorCode) {
             case "§c" -> "빨강";
-            case "§6" -> "금색";
+            case "§6" -> "주황";
             case "§e" -> "노랑";
-            case "§a" -> "초록";
-            case "§b" -> "하늘색";
-            case "§9" -> "파랑";
-            case "§d" -> "자주색";
+            case "§2" -> "초록";
+            case "§a" -> "연두";
+            case "§1" -> "파랑";
+            case "§b" -> "하늘";
+            case "§5" -> "보라";
+            case "§d" -> "분홍";
+            case "§7" -> "회색";
+            case "§0" -> "검정";
+            case "§f" -> "하양";
             default -> "알 수 없음";
         };
     }
