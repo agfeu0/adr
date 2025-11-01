@@ -97,8 +97,6 @@ public class InventorySizeListener implements Listener {
         // 나침반이 버려지려고 하면 방지
         if (event.getItemDrop().getItemStack().getType() == Material.COMPASS) {
             event.setCancelled(true);
-            // 나침반을 다시 인벤토리에 추가
-            ViewerInitializer.setCompassSlot5(player);
         }
     }
 
