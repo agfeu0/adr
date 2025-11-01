@@ -109,8 +109,17 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> completions = new ArrayList<>();
 
+        // 1번째 인자일 때 온라인 플레이어 목록 제공
+        if (args.length == 1) {
+            String input = args[0].toLowerCase();
+            for (org.bukkit.entity.Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
+                if (player.getName().toLowerCase().startsWith(input)) {
+                    completions.add(player.getName());
+                }
+            }
+        }
         // 2번째 인자일 때 색깔 목록 제공
-        if (args.length == 2) {
+        else if (args.length == 2) {
             String[] colors = {
                 "red", "orange", "yellow", "dark_green", "green",
                 "dark_blue", "light_blue", "dark_purple", "magenta",
