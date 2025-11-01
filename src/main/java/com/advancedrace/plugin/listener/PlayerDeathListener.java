@@ -24,6 +24,15 @@ public class PlayerDeathListener implements Listener {
         Player deadPlayer = event.getEntity();
         Player killer = deadPlayer.getKiller();
 
+        // 시청자인지 확인
+        TeamManager.Team deadTeam = teamManager.getTeam(deadPlayer);
+        if (deadTeam != null) {
+            // 시청자이면 베리어와 나침반은 드랍 안 함
+            event.getDrops().removeIf(item ->
+                item.getType() == Material.BARRIER || item.getType() == Material.COMPASS
+            );
+        }
+
         // 킬러가 없으면 무시
         if (killer == null) {
             return;
@@ -31,7 +40,6 @@ public class PlayerDeathListener implements Listener {
 
         // 킬러의 팀과 죽은 플레이어의 팀 확인
         TeamManager.Team killerTeam = teamManager.getTeam(killer);
-        TeamManager.Team deadTeam = teamManager.getTeam(deadPlayer);
 
         // 팀이 없으면 무시
         if (killerTeam == null || deadTeam == null) {
