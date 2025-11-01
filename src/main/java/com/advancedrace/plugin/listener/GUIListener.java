@@ -52,6 +52,8 @@ public class GUIListener implements Listener {
                 ViewerInitializer.initializeViewer(player);
                 ViewerInitializer.updateCompass(player, streamerName);
             }
+            // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그)
+            PlayerNameListener.updatePlayerDisplay(player, teamManager);
             player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 팀에 합류했습니다!");
             player.closeInventory();
         } else {
