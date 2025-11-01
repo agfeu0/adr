@@ -39,8 +39,14 @@ public class InventorySizeListener implements Listener {
             return;
         }
 
-        // 5번 슬롯(인덱스 4)을 클릭했으면 취소
+        // 나침반 조작 방지 (슬롯 4에서의 모든 동작 차단)
         if (event.getSlot() == 4) {
+            event.setCancelled(true);
+            return;
+        }
+
+        // 다른 곳에서 나침반을 슬롯 4로 옮기려는 시도 방지
+        if (event.getCursor() != null && event.getCursor().getType() == Material.COMPASS) {
             event.setCancelled(true);
             return;
         }
