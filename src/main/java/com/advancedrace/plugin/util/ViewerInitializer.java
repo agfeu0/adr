@@ -55,10 +55,10 @@ public class ViewerInitializer {
     }
 
     /**
-     * 플레이어 크기를 0.5로 축소
+     * 플레이어 크기를 0.7로 축소
      */
     private static void setScaleSmall(Player player) {
-        String command = "attribute " + player.getName() + " minecraft:scale base set 0.5";
+        String command = "attribute " + player.getName() + " minecraft:scale base set 0.7";
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
