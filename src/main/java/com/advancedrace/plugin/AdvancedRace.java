@@ -50,6 +50,13 @@ public class AdvancedRace extends JavaPlugin {
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
 
+        // 로드 후 플레이어 디스플레이 업데이트 (1틱 지연)
+        getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+            for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
+                PlayerNameListener.updatePlayerDisplay(player, teamManager);
+            }
+        }, 1);
+
         // 명령어 등록
         StreamerCommand streamerCommand = new StreamerCommand(teamManager);
         getCommand("스트리머").setExecutor(streamerCommand);

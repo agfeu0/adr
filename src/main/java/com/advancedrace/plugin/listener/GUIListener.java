@@ -42,6 +42,10 @@ public class GUIListener implements Listener {
         TeamManager teamManager = guiHolder.getTeamManager();
 
         // 아이템의 디스플레이 네임에서 스트리머 이름 추출
+        if (event.getCurrentItem().getItemMeta() == null) {
+            return;
+        }
+
         String displayName = event.getCurrentItem().getItemMeta().getDisplayName();
         String streamerName = ChatColor.stripColor(displayName);
 
