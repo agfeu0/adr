@@ -57,7 +57,7 @@ public class TeamSelectGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§b" + streamerName);
+            meta.setDisplayName(team.getColor() + streamerName);
             List<String> lore = new ArrayList<>();
             lore.add("§7팀원: " + team.getPlayerCount() + "명");
             lore.add("");

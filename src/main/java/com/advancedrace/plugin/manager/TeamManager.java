@@ -14,12 +14,19 @@ public class TeamManager {
      * 새로운 팀 생성 (스트리머가 팀장)
      */
     public boolean createTeam(String streamerName) {
+        return createTeam(streamerName, null);
+    }
+
+    /**
+     * 새로운 팀 생성 (스트리머가 팀장, 색깔 지정)
+     */
+    public boolean createTeam(String streamerName, String color) {
         if (streamerTeams.containsKey(streamerName)) {
             return false;
         }
 
         String teamName = "team_" + streamerName;
-        Team team = new Team(teamName, streamerName);
+        Team team = color != null ? new Team(teamName, streamerName, color) : new Team(teamName, streamerName);
         teams.put(teamName, team);
         streamerTeams.put(streamerName, teamName);
 
@@ -109,10 +116,23 @@ public class TeamManager {
         private String name;
         private String streamer;
         private Set<Player> players = new HashSet<>();
+        private String color;
 
         public Team(String name, String streamer) {
             this.name = name;
             this.streamer = streamer;
+            this.color = getRandomColor();
+        }
+
+        public Team(String name, String streamer, String color) {
+            this.name = name;
+            this.streamer = streamer;
+            this.color = color;
+        }
+
+        private static String getRandomColor() {
+            String[] colors = {"§c", "§6", "§e", "§a", "§b", "§9", "§d"};
+            return colors[(int) (Math.random() * colors.length)];
         }
 
         public void addPlayer(Player player) {
@@ -129,6 +149,10 @@ public class TeamManager {
 
         public String getStreamer() {
             return streamer;
+        }
+
+        public String getColor() {
+            return color;
         }
 
         public Set<Player> getPlayers() {
