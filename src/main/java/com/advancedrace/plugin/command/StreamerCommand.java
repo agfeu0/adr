@@ -5,9 +5,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class StreamerCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class StreamerCommand implements CommandExecutor, TabCompleter {
 
     private TeamManager teamManager;
 
@@ -99,5 +103,28 @@ public class StreamerCommand implements CommandExecutor {
             case "§f" -> "하양";
             default -> "알 수 없음";
         };
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        // 2번째 인자일 때 색깔 목록 제공
+        if (args.length == 2) {
+            String[] colors = {
+                "red", "orange", "yellow", "dark_green", "green",
+                "dark_blue", "light_blue", "dark_purple", "magenta",
+                "gray", "black", "white"
+            };
+
+            String input = args[1].toLowerCase();
+            for (String color : colors) {
+                if (color.startsWith(input)) {
+                    completions.add(color);
+                }
+            }
+        }
+
+        return completions;
     }
 }

@@ -40,7 +40,9 @@ public class AdvancedRace extends JavaPlugin {
         viewerSummonManager = new ViewerSummonManager(teamManager);
 
         // 명령어 등록
-        getCommand("스트리머").setExecutor(new StreamerCommand(teamManager));
+        StreamerCommand streamerCommand = new StreamerCommand(teamManager);
+        getCommand("스트리머").setExecutor(streamerCommand);
+        getCommand("스트리머").setTabCompleter(streamerCommand);
         getCommand("팀선택").setExecutor(new TeamSelectCommand(teamManager));
         getCommand("발전과제_tp").setExecutor(new TeleportCommand());
 
