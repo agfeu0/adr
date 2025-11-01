@@ -26,14 +26,14 @@ public class PlayerNameListener implements Listener {
         TeamManager.Team team = teamManager.getTeam(player);
 
         if (team != null) {
-            // 탭리스트 이름 설정
-            Component listName = Component.text("[" + team.getStreamer() + "팀] " + player.getName(),
-                    TextColor.color(getColorValue(team.getColor())));
+            // 탭리스트 이름 설정 ([팀이름]은 색깔, 플레이어명은 흰색)
+            Component listName = Component.text("[" + team.getStreamer() + "팀] ", TextColor.color(getColorValue(team.getColor())))
+                    .append(Component.text(player.getName(), TextColor.color(0xFFFFFF)));
             player.playerListName(listName);
 
-            // 네임태그 설정 (위의 이름)
-            Component displayName = Component.text("[" + team.getStreamer() + "팀] " + player.getName(),
-                    TextColor.color(getColorValue(team.getColor())));
+            // 네임태그 설정 ([팀이름]은 색깔, 플레이어명은 흰색)
+            Component displayName = Component.text("[" + team.getStreamer() + "팀] ", TextColor.color(getColorValue(team.getColor())))
+                    .append(Component.text(player.getName(), TextColor.color(0xFFFFFF)));
             player.customName(displayName);
             player.setCustomNameVisible(true);
         } else {
