@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.manager;
 
+import com.advancedrace.plugin.util.ViewerInitializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -71,6 +72,9 @@ public class ViewerSummonManager {
 
             // 기본 템 제공 (돌 곡괭이)
             giveStartingItems(viewer);
+
+            // 팀장을 가리키는 나침반 지급
+            ViewerInitializer.updateCompass(viewer, streamerName);
 
             // 스코어보드 설정 및 시청자 수 업데이트
             com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);

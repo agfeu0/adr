@@ -3,7 +3,6 @@ package com.advancedrace.plugin.listener;
 import com.advancedrace.plugin.gui.TeamSelectInventoryHolder;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
-import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,9 +57,6 @@ public class GUIListener implements Listener {
 
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그)
             PlayerNameListener.updatePlayerDisplay(player, teamManager);
-
-            // 팀장을 가리키는 나침반 지급
-            ViewerInitializer.updateCompass(player, streamerName);
 
             // 스코어보드 설정
             ScoreboardManager.setupScoreboard(player, teamManager);
