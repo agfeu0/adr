@@ -70,23 +70,17 @@ public class AdvancementListener implements Listener {
             return;
         }
 
-        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면, PvP 관련 발전과제 제외
+        // PvP 킬 직후 0.5초 내에만 발전과제 제외 (플레이어 처치 직후 발전과제만 제외)
         long currentTime = System.currentTimeMillis();
-        boolean hasRecentPvPKill = false;
         for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
             long deathTime = playerKilledByPlayerTimes.get(deadPlayerName);
-            if (currentTime - deathTime < 5000) { // 5초 이내
-                hasRecentPvPKill = true;
-                break;
+            if (currentTime - deathTime < 500) { // 0.5초 이내만
+                // PvP 킬 직후 매우 짧은 시간 내 발전과제는 제외
+                return;
             } else if (currentTime - deathTime >= 5000) {
                 // 오래된 기록 제거
                 playerKilledByPlayerTimes.remove(deadPlayerName);
             }
-        }
-
-        // PvP 킬 직후 5초 내에는 모든 발전과제 제외 (플레이어 처치로 인한 점수 제외)
-        if (hasRecentPvPKill) {
-            return;
         }
 
         // Display 정보로 일반/특수 구분
