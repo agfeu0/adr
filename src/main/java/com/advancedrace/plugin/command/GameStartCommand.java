@@ -70,13 +70,10 @@ public class GameStartCommand implements CommandExecutor {
         // 모든 플레이어의 발전과제 초기화
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke @a everything");
 
-        // 모든 온라인 플레이어의 인벤토리 초기화 및 스코어보드 설정
+        // 모든 온라인 플레이어의 인벤토리 초기화
         for (org.bukkit.entity.Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             // 인벤토리 초기화
             onlinePlayer.getInventory().clear();
-
-            // 스코어보드 설정
-            com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(onlinePlayer, teamManager);
         }
 
         // 모든 팀의 플레이어에 대해 SpawnTier 초기화
