@@ -147,14 +147,22 @@ public class GameStartCommand implements CommandExecutor {
                 // 나침반 추적 시작
                 advancedRace.getCompassTrackingManager().start();
 
-                // 탭 리스트 팀별 정렬 및 네임태그 색상 재설정 (1틱 지연 - Scoreboard 팀 생성 완료 대기)
+                // 탭 리스트 팀별 정렬 및 네임태그 색상 재설정 (3틱 지연 - Scoreboard 설정 완료 대기)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                    // 모든 온라인 플레이어의 네임태그 색상 재설정
+                    // 모든 온라인 플레이어의 네임태그 색상 강력하게 재설정
                     for (Player p : Bukkit.getOnlinePlayers()) {
+                        // 기존 Scoreboard 팀 제거
+                        org.bukkit.scoreboard.Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+                        for (org.bukkit.scoreboard.Team t : scoreboard.getTeams()) {
+                            if (t.hasEntry(p.getName())) {
+                                t.removeEntry(p.getName());
+                            }
+                        }
+                        // 네임태그 색상 재설정
                         PlayerNameListener.updatePlayerDisplay(p, teamManager);
                     }
                     TablistManager.organizeTablist(teamManager);
-                }, 1);
+                }, 3);
 
                 int successCount = 0;
                 int failCount = 0;
