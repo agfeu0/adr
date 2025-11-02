@@ -70,6 +70,19 @@ public class AdvancementListener implements Listener {
             return;
         }
 
+        // PvP 킬 직후 1초 내에는 모든 발전과제 제외 (플레이어 처치로 인한 1점 제외)
+        long currentTime = System.currentTimeMillis();
+        for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
+            long deathTime = playerKilledByPlayerTimes.get(deadPlayerName);
+            if (currentTime - deathTime < 1000) { // 1초 이내
+                // PvP 킬 직후 발전과제 제외
+                return;
+            } else if (currentTime - deathTime >= 5000) {
+                // 오래된 기록 제거
+                playerKilledByPlayerTimes.remove(deadPlayerName);
+            }
+        }
+
         // Display 정보로 일반/특수 구분
         int summonCount = 1; // 기본값: 일반 = 1명
         int scorePoints = 1; // 기본값: 일반 = 1점
