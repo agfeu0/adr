@@ -70,6 +70,12 @@ public class AdvancementListener implements Listener {
             return;
         }
 
+        // 음식/식음료 관련 발전과제는 무시 (황금사과 섭취 등으로 인한 의도하지 않은 소환 방지)
+        if (advancementName.contains("food") || advancementName.contains("eat") ||
+            advancementName.contains("drink") || advancementName.contains("husbandry")) {
+            return;
+        }
+
         // PvP 킬 직후 100ms 내에만 발전과제 제외 (플레이어 처치 직후 자동 수여되는 발전과제만)
         long currentTime = System.currentTimeMillis();
         for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
