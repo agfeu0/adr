@@ -60,8 +60,8 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
-        // 플레이어 킬 관련 발전과제는 무시 (의도하지 않은 소환 방지)
-        if (advancementName.contains("kill_player") || advancementName.contains("combat")) {
+        // combat 관련 발전과제는 무시 (의도하지 않은 소환 방지)
+        if (advancementName.contains("combat")) {
             return;
         }
 
