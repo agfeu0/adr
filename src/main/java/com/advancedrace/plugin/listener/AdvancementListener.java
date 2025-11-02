@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.listener;
 
+import com.advancedrace.plugin.AdvancedRace;
 import com.advancedrace.plugin.manager.AdvancementManager;
 import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.TeamManager;
@@ -98,8 +99,12 @@ public class AdvancementListener implements Listener {
             }
         }
 
-        // 게임 데이터 저장 (점수 업데이트)
-        DataPersistence.saveGameData(teamManager, teamScores);
+        // 게임 데이터 저장 (점수 및 남은 시간 포함)
+        long remainingSeconds = 0;
+        if (AdvancedRace.getInstance().getGameTimerTask() != null) {
+            remainingSeconds = AdvancedRace.getInstance().getGameTimerTask().getRemainingSeconds();
+        }
+        DataPersistence.saveGameData(teamManager, teamScores, remainingSeconds);
 
         // 소환 결과 메시지는 5틱 후에 전송
         Bukkit.getScheduler().scheduleSyncDelayedTask(

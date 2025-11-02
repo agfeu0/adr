@@ -24,9 +24,9 @@ public class DataPersistence {
     private static Map<String, String> playerTeamMap = new HashMap<>();
 
     /**
-     * 게임 상태를 JSON 파일로 저장 (점수 정보 포함)
+     * 게임 상태를 JSON 파일로 저장 (점수 정보, 남은시간 포함)
      */
-    public static void saveGameData(TeamManager teamManager, Map<String, Integer> teamScores) {
+    public static void saveGameData(TeamManager teamManager, Map<String, Integer> teamScores, long remainingSeconds) {
         try {
             File folder = new File(DATA_FOLDER);
             if (!folder.exists()) {
@@ -61,6 +61,9 @@ public class DataPersistence {
                 }
             }
             root.add("teams", teamsArray);
+
+            // 남은 시간 저장
+            root.addProperty("remainingSeconds", remainingSeconds);
 
             // JSON 파일에 저장
             try (FileWriter writer = new FileWriter(saveFile)) {
@@ -159,6 +162,32 @@ public class DataPersistence {
             Bukkit.getLogger().warning("[AdvancedRace] 팀 점수 로드 실패: " + e.getMessage());
         }
         return scores;
+    }
+
+    /**
+     * 저장된 남은 시간 로드 (초 단위)
+     */
+    public static long loadRemainingSeconds() {
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+
+            if (!saveFile.exists()) {
+                return 0;
+            }
+
+            try (FileReader reader = new FileReader(saveFile)) {
+                JsonObject root = gson.fromJson(reader, JsonObject.class);
+
+                if (root == null || !root.has("remainingSeconds")) {
+                    return 0;
+                }
+
+                return root.get("remainingSeconds").getAsLong();
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 남은 시간 로드 실패: " + e.getMessage());
+            return 0;
+        }
     }
 
     /**

@@ -59,8 +59,8 @@ public class GameStartCommand implements CommandExecutor {
         AdvancedRace advancedRace = AdvancedRace.getInstance();
         advancedRace.getAdvancementListener().initializeTeamScores();
 
-        // 게임 데이터 저장 (초기화된 점수 포함)
-        DataPersistence.saveGameData(teamManager, advancedRace.getAdvancementListener().getTeamScores());
+        // 게임 데이터 저장 (초기화된 점수 및 게임 시간 포함)
+        DataPersistence.saveGameData(teamManager, advancedRace.getAdvancementListener().getTeamScores(), advancedRace.getGameDurationSeconds());
 
         // 사망 횟수 초기화
         teamManager.clearAllDeathCounts();
