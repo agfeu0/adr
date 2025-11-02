@@ -43,10 +43,14 @@ public class CompassInteractListener implements Listener {
             return;
         }
 
+        // 이벤트 먼저 취소
+        event.setCancelled(true);
+
         // 나침반 새로고침
         String streamerName = team.getStreamer();
         ViewerInitializer.updateCompass(player, streamerName);
 
-        event.setCancelled(true);
+        // 인벤토리 업데이트 동기화
+        player.getInventory().setHeldItemSlot(4);
     }
 }
