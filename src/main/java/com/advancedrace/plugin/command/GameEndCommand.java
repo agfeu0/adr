@@ -57,6 +57,9 @@ public class GameEndCommand implements CommandExecutor {
             timerTask.stop();
         }
 
+        // 나침반 추적 정지
+        advancedRace.getCompassTrackingManager().stop();
+
         // Bukkit Scoreboard에서 모든 팀 제거
         Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         for (Team scoreboardTeam : mainScoreboard.getTeams()) {

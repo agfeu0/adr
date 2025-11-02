@@ -16,6 +16,7 @@ import com.advancedrace.plugin.listener.PlayerNameListener;
 import com.advancedrace.plugin.listener.PvPListener;
 import com.advancedrace.plugin.listener.StreamerDeathListener;
 import com.advancedrace.plugin.manager.AdvancementManager;
+import com.advancedrace.plugin.manager.CompassTrackingManager;
 import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
@@ -36,6 +37,7 @@ public class AdvancedRace extends JavaPlugin {
     private GameStateManager gameStateManager;
     private GameTimerTask gameTimerTask;
     private AdvancementListener advancementListener;
+    private CompassTrackingManager compassTrackingManager;
 
     @Override
     public void onEnable() {
@@ -56,6 +58,9 @@ public class AdvancedRace extends JavaPlugin {
 
         // 게임 상태 매니저 초기화
         gameStateManager = new GameStateManager();
+
+        // 나침반 추적 매니저 초기화
+        compassTrackingManager = new CompassTrackingManager(this, teamManager);
 
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
@@ -165,5 +170,9 @@ public class AdvancedRace extends JavaPlugin {
 
     public AdvancementManager getAdvancementManager() {
         return advancementManager;
+    }
+
+    public CompassTrackingManager getCompassTrackingManager() {
+        return compassTrackingManager;
     }
 }

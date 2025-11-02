@@ -142,6 +142,9 @@ public class GameStartCommand implements CommandExecutor {
                     p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                 }
 
+                // 나침반 추적 시작
+                advancedRace.getCompassTrackingManager().start();
+
                 int successCount = 0;
                 int failCount = 0;
 
