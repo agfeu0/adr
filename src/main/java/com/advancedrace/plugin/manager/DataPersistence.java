@@ -20,6 +20,9 @@ public class DataPersistence {
     private static final String SAVE_FILE = "game_data.json";
     private static final Gson gson = new GsonBuilder().create();
 
+    // 메모리에 저장된 팀 정보 (플레이어가 로드될 때까지 유지)
+    private static Map<String, String> playerTeamMap = new HashMap<>();
+
     /**
      * 게임 상태를 JSON 파일로 저장
      */
@@ -104,6 +107,9 @@ public class DataPersistence {
                         Player player = Bukkit.getPlayer(playerName);
                         if (player != null) {
                             teamManager.addPlayerToTeam(player, streamerName);
+                        } else {
+                            // 플레이어가 오프라인이면 메모리에 저장 (나중에 입장할 때 자동 추가)
+                            playerTeamMap.put(playerName, streamerName);
                         }
                     }
                 }
@@ -129,5 +135,16 @@ public class DataPersistence {
         } catch (Exception e) {
             Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 삭제 실패: " + e.getMessage());
         }
+    }
+
+    /**
+     * 저장된 팀 정보에서 플레이어의 스트리머 이름 조회
+     */
+    public static String getStreamerForPlayer(String playerName) {
+        String streamerName = playerTeamMap.get(playerName);
+        if (streamerName != null) {
+            playerTeamMap.remove(playerName); // 사용한 후 제거
+        }
+        return streamerName;
     }
 }

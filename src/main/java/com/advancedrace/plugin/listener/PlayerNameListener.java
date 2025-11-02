@@ -1,7 +1,9 @@
 package com.advancedrace.plugin.listener;
 
+import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
+import com.advancedrace.plugin.util.ViewerInitializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -24,6 +26,21 @@ public class PlayerNameListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        // 저장된 팀 정보 확인 및 자동 추가
+        String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
+        if (streamerName != null) {
+            TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+            if (team != null) {
+                // 팀에 추가
+                teamManager.addPlayerToTeam(player, streamerName);
+                // SpawnTier를 1로 설정 (대기 중 상태)
+                teamManager.setSpawnTier(player, 1);
+                // 나침반 업데이트
+                ViewerInitializer.updateCompass(player, streamerName);
+            }
+        }
+
         updatePlayerDisplay(player, teamManager);
         // 스코어보드 설정
         ScoreboardManager.setupScoreboard(player, teamManager);
