@@ -24,9 +24,9 @@ public class DataPersistence {
     private static Map<String, String> playerTeamMap = new HashMap<>();
 
     /**
-     * 게임 상태를 JSON 파일로 저장
+     * 게임 상태를 JSON 파일로 저장 (점수 정보 포함)
      */
-    public static void saveGameData(TeamManager teamManager) {
+    public static void saveGameData(TeamManager teamManager, Map<String, Integer> teamScores) {
         try {
             File folder = new File(DATA_FOLDER);
             if (!folder.exists()) {
@@ -52,6 +52,10 @@ public class DataPersistence {
                         playersArray.add(player.getName());
                     }
                     teamObj.add("players", playersArray);
+
+                    // 팀 점수 저장
+                    int score = teamScores.getOrDefault(streamerName, 0);
+                    teamObj.addProperty("score", score);
 
                     teamsArray.add(teamObj);
                 }
@@ -120,6 +124,41 @@ public class DataPersistence {
             Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 로드 실패: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 저장된 팀별 점수 로드
+     */
+    public static Map<String, Integer> loadTeamScores() {
+        Map<String, Integer> scores = new HashMap<>();
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+
+            if (!saveFile.exists()) {
+                return scores;
+            }
+
+            try (FileReader reader = new FileReader(saveFile)) {
+                JsonObject root = gson.fromJson(reader, JsonObject.class);
+
+                if (root == null || !root.has("teams")) {
+                    return scores;
+                }
+
+                JsonArray teamsArray = root.getAsJsonArray("teams");
+
+                // 팀별 점수 로드
+                for (int i = 0; i < teamsArray.size(); i++) {
+                    JsonObject teamObj = teamsArray.get(i).getAsJsonObject();
+                    String streamerName = teamObj.get("streamer").getAsString();
+                    int score = teamObj.has("score") ? teamObj.get("score").getAsInt() : 0;
+                    scores.put(streamerName, score);
+                }
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 팀 점수 로드 실패: " + e.getMessage());
+        }
+        return scores;
     }
 
     /**

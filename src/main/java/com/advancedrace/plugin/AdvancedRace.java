@@ -25,6 +25,8 @@ import com.advancedrace.plugin.task.GameTimerTask;
 import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Map;
+
 public class AdvancedRace extends JavaPlugin {
 
     private static AdvancedRace instance;
@@ -105,6 +107,12 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(advancementListener, this);
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(teamManager), this);
+
+        // 저장된 팀 점수 로드
+        Map<String, Integer> savedScores = DataPersistence.loadTeamScores();
+        for (String streamerName : savedScores.keySet()) {
+            advancementListener.setTeamScore(streamerName, savedScores.get(streamerName));
+        }
 
         // Task 등록 (거리 제한 체크: 3초마다)
         new DistanceLimitTask(teamManager).runTaskTimer(this, 0, 60);

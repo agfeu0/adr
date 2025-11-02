@@ -1,6 +1,7 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.AdvancementManager;
+import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
@@ -97,6 +98,9 @@ public class AdvancementListener implements Listener {
             }
         }
 
+        // 게임 데이터 저장 (점수 업데이트)
+        DataPersistence.saveGameData(teamManager, teamScores);
+
         // 소환 결과 메시지는 5틱 후에 전송
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 Bukkit.getPluginManager().getPlugin("AdvancedRace"),
@@ -119,6 +123,20 @@ public class AdvancementListener implements Listener {
         for (String streamerName : teamManager.getStreamerNames()) {
             teamScores.put(streamerName, 0);
         }
+    }
+
+    /**
+     * 팀별 점수 조회
+     */
+    public Map<String, Integer> getTeamScores() {
+        return new HashMap<>(teamScores);
+    }
+
+    /**
+     * 팀의 점수 설정 (로드 시 사용)
+     */
+    public void setTeamScore(String streamerName, int score) {
+        teamScores.put(streamerName, score);
     }
 
     private boolean isStreamer(Player player) {
