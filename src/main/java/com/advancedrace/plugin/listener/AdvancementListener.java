@@ -25,8 +25,8 @@ public class AdvancementListener implements Listener {
     private AdvancementManager advancementManager;
     private ViewerSummonManager viewerSummonManager;
 
-    // 플레이어가 최근에 죽은 시간 추적 (사망 후 5초간 소환 메시지 억제)
-    private Map<String, Long> recentDeathTimes = new HashMap<>();
+    // 플레이어가 다른 플레이어에 의해 죽은 시간 추적 (발전과제 점수 제외용)
+    private Map<String, Long> playerKilledByPlayerTimes = new HashMap<>();
 
     // 팀별 발전과제 점수 추적
     private Map<String, Integer> teamScores = new HashMap<>();
@@ -40,8 +40,12 @@ public class AdvancementListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player deadPlayer = event.getEntity();
-        // 플레이어 사망 시간 기록 (사망 후 5초간 소환 메시지 억제)
-        recentDeathTimes.put(deadPlayer.getName(), System.currentTimeMillis());
+
+        // 플레이어가 다른 플레이어에 의해 죽었는지 확인
+        if (deadPlayer.getKiller() instanceof Player) {
+            // PvP 킬인 경우에만 기록
+            playerKilledByPlayerTimes.put(deadPlayer.getName(), System.currentTimeMillis());
+        }
     }
 
     @EventHandler
@@ -61,16 +65,16 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
-        // 최근 5초 내에 죽은 플레이어가 있으면 발전과제 점수 제외
+        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면 발전과제 점수 제외
         long currentTime = System.currentTimeMillis();
-        for (String deadPlayerName : new java.util.ArrayList<>(recentDeathTimes.keySet())) {
-            long deathTime = recentDeathTimes.get(deadPlayerName);
+        for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
+            long deathTime = playerKilledByPlayerTimes.get(deadPlayerName);
             if (currentTime - deathTime < 5000) { // 5초 이내
-                // 플레이어가 죽었으므로 점수 제외
+                // 플레이어가 다른 플레이어에 의해 죽었으므로 점수 제외
                 return;
             } else if (currentTime - deathTime >= 5000) {
                 // 오래된 기록 제거
-                recentDeathTimes.remove(deadPlayerName);
+                playerKilledByPlayerTimes.remove(deadPlayerName);
             }
         }
 
