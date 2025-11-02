@@ -43,7 +43,7 @@ public class PlayerNameListener implements Listener {
         // 스코어보드 설정
         ScoreboardManager.setupScoreboard(player, teamManager);
 
-        // 저장된 발전과제 점수 복원 (1틱 지연)
+        // 저장된 발전과제 점수 복원 및 남은 시간 업데이트 (1틱 지연)
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 AdvancedRace.getInstance(),
                 () -> {
@@ -59,6 +59,17 @@ public class PlayerNameListener implements Listener {
                         String teamStreamerName = team.getStreamer();
                         int savedScore = DataPersistence.loadTeamScores().getOrDefault(teamStreamerName, 0);
                         ScoreboardManager.updateScore(player, savedScore);
+                    }
+
+                    // 게임이 진행 중이면 현재 남은 시간 업데이트
+                    AdvancedRace advancedRace = AdvancedRace.getInstance();
+                    if (advancedRace.getGameStateManager().isRunning() && advancedRace.getGameTimerTask() != null) {
+                        long remainingSeconds = advancedRace.getGameTimerTask().getRemainingSeconds();
+                        long hours = remainingSeconds / 3600;
+                        long minutes = (remainingSeconds % 3600) / 60;
+                        long seconds = remainingSeconds % 60;
+                        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+                        ScoreboardManager.updateTime(player, timeString);
                     }
                 },
                 1

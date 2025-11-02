@@ -77,12 +77,11 @@ public class AdvancedRace extends JavaPlugin {
         // 저장된 남은 시간 로드
         long savedRemainingSeconds = DataPersistence.loadRemainingSeconds();
         if (savedRemainingSeconds > 0) {
-            // 게임이 진행 중이면 GameTimerTask 복원
-            if (gameStateManager.isRunning()) {
-                gameTimerTask = new GameTimerTask(gameStateManager, this, savedRemainingSeconds);
-                gameTimerTask.start();
-                getLogger().info("[AdvancedRace] 게임 타이머 복원됨! (남은 시간: " + savedRemainingSeconds + "초)");
-            }
+            // 게임이 진행 중이었으면 복원
+            gameStateManager.startGame();
+            gameTimerTask = new GameTimerTask(gameStateManager, this, savedRemainingSeconds);
+            gameTimerTask.start();
+            getLogger().info("[AdvancedRace] 게임 타이머 복원됨! (남은 시간: " + savedRemainingSeconds + "초)");
         }
 
         // 로드 후 플레이어 디스플레이 및 나침반 업데이트 (1틱 지연)
@@ -138,6 +137,7 @@ public class AdvancedRace extends JavaPlugin {
         // 나침반 추적 시작 (게임이 진행 중이면)
         if (gameStateManager.isRunning()) {
             compassTrackingManager.start();
+            getLogger().info("[AdvancedRace] 나침반 추적 시작됨!");
         }
 
         getLogger().info("AdvancedRace 플러그인 활성화됨!");
