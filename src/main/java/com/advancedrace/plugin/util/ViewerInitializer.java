@@ -97,7 +97,7 @@ public class ViewerInitializer {
             return compass;
         }
 
-        meta.setDisplayName("§b" + streamerName + " 팀장");
+        meta.setDisplayName("§b스트리머 " + streamerName);
 
         // 팀장이 온라인이면 스폰 위치를 로드스톤으로 설정
         if (streamer != null && streamer.isOnline()) {
