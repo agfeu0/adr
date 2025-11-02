@@ -46,14 +46,17 @@ public class ViewerSummonManager {
                 continue;
             }
 
+            // 팀 변경 기회가 있으면 절대 소환 안함 (첫 사망 플레이어 제외)
+            if (teamManager.hasDeathChance(player)) {
+                continue;
+            }
+
             // 이 팀에 속한 플레이어 확인
             if (streamerName.equals(teamManager.getTeam(player) != null ? teamManager.getTeam(player).getStreamer() : null)) {
                 // 아직 스폰되지 않은 플레이어만 (스폰 순위가 설정되지 않은 플레이어)
                 // 그리고 이미 소환되지 않은 플레이어만
-                // 그리고 팀 변경 기회가 없는 플레이어만 (재선택 기회가 있는 사람은 제외)
                 if (teamManager.getSpawnTier(player) == 1 &&
-                    !teamManager.getSummonedViewersSet(streamerName).contains(player.getName()) &&
-                    !teamManager.hasDeathChance(player)) {
+                    !teamManager.getSummonedViewersSet(streamerName).contains(player.getName())) {
                     waitingPlayers.add(player);
                 }
             }
