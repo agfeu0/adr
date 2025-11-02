@@ -65,6 +65,23 @@ public class AdvancedRace extends JavaPlugin {
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
 
+        // 저장된 팀 점수 로드
+        Map<String, Integer> savedScores = DataPersistence.loadTeamScores();
+        for (String streamerName : savedScores.keySet()) {
+            advancementListener.setTeamScore(streamerName, savedScores.get(streamerName));
+        }
+
+        // 저장된 남은 시간 로드
+        long savedRemainingSeconds = DataPersistence.loadRemainingSeconds();
+        if (savedRemainingSeconds > 0) {
+            // 게임이 진행 중이면 GameTimerTask 복원
+            if (gameStateManager.isRunning()) {
+                gameTimerTask = new GameTimerTask(gameStateManager, this, savedRemainingSeconds);
+                gameTimerTask.start();
+                getLogger().info("[AdvancedRace] 게임 타이머 복원됨! (남은 시간: " + savedRemainingSeconds + "초)");
+            }
+        }
+
         // 로드 후 플레이어 디스플레이 및 나침반 업데이트 (1틱 지연)
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
             for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
@@ -113,20 +130,29 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(teamManager), this);
 
-        // 저장된 팀 점수 로드
-        Map<String, Integer> savedScores = DataPersistence.loadTeamScores();
-        for (String streamerName : savedScores.keySet()) {
-            advancementListener.setTeamScore(streamerName, savedScores.get(streamerName));
-        }
-
         // Task 등록 (거리 제한 체크: 3초마다)
         new DistanceLimitTask(teamManager).runTaskTimer(this, 0, 60);
+
+        // 나침반 추적 시작 (게임이 진행 중이면)
+        if (gameStateManager.isRunning()) {
+            compassTrackingManager.start();
+        }
 
         getLogger().info("AdvancedRace 플러그인 활성화됨!");
     }
 
     @Override
     public void onDisable() {
+        // 게임이 진행 중이면 게임 데이터 저장
+        if (gameStateManager != null && gameStateManager.isRunning()) {
+            long remainingSeconds = 0;
+            if (gameTimerTask != null) {
+                remainingSeconds = gameTimerTask.getRemainingSeconds();
+            }
+            DataPersistence.saveGameData(teamManager, advancementListener.getTeamScores(), remainingSeconds);
+            getLogger().info("AdvancedRace 게임 데이터 저장됨!");
+        }
+
         getLogger().info("AdvancedRace 플러그인 비활성화됨!");
     }
 
