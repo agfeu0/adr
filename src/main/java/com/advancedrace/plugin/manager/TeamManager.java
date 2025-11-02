@@ -13,6 +13,7 @@ public class TeamManager {
     private Set<String> spectatorsWithChance = new HashSet<>(); // 스펙테이터 모드인 플레이어 (팀 변경 기회 있음)
     private Map<String, Integer> playerSpawnTier = new HashMap<>(); // 플레이어 스폰 순위 (1 = 먼저, 2 = 나중)
     private Map<String, Integer> playerDeathCount = new HashMap<>(); // 플레이어 사망 횟수
+    private Map<String, Set<String>> summonedViewers = new HashMap<>(); // 스트리머별 소환된 시청자 이름 목록
 
     /**
      * 새로운 팀 생성 (스트리머가 팀장)
@@ -219,6 +220,39 @@ public class TeamManager {
      */
     public void clearAllDeathCounts() {
         playerDeathCount.clear();
+    }
+
+    /**
+     * 스트리머에게 시청자를 소환으로 표시
+     */
+    public void markViewerAsSummoned(String streamerName, String viewerName) {
+        summonedViewers.computeIfAbsent(streamerName, k -> new HashSet<>()).add(viewerName);
+    }
+
+    /**
+     * 스트리머의 소환된 시청자 수 반환 (팀에 속한 사람만 계산)
+     */
+    public int getSummonedViewerCount(String streamerName) {
+        Team team = getTeamByStreamer(streamerName);
+        if (team == null) {
+            return 0;
+        }
+
+        Set<String> summoned = summonedViewers.getOrDefault(streamerName, new HashSet<>());
+        int count = 0;
+        for (Player player : team.getPlayers()) {
+            if (summoned.contains(player.getName())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 모든 소환된 시청자 정보 초기화 (게임 종료 시)
+     */
+    public void clearAllSummonedViewers() {
+        summonedViewers.clear();
     }
 
     public static class Team {

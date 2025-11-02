@@ -9,10 +9,17 @@ import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreboardManager {
 
+    private static TeamManager staticTeamManager;
+
+    public static void setTeamManager(TeamManager manager) {
+        staticTeamManager = manager;
+    }
+
     /**
      * 플레이어의 스코어보드 설정
      */
     public static void setupScoreboard(Player player, TeamManager teamManager) {
+        staticTeamManager = teamManager;
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("game", "dummy", "§b발전과제 데스런");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -29,7 +36,8 @@ public class ScoreboardManager {
         }
 
         String streamerName = (team != null) ? team.getStreamer() : "없음";
-        int viewerCount = (team != null) ? team.getPlayerCount() : 0;
+        int viewerCount = (team != null) ? (team.getPlayerCount() - 1) : 0; // 스트리머 제외
+        int summonedCount = (team != null && staticTeamManager != null) ? staticTeamManager.getSummonedViewerCount(streamerName) : 0;
 
         // 빈 줄 (맨 위)
         objective.getScore("  ").setScore(score--);
@@ -47,8 +55,8 @@ public class ScoreboardManager {
         // 발전과제 점수
         objective.getScore("§e발전과제: §f0점").setScore(score--);
 
-        // 시청자 수
-        objective.getScore("§e시청자: §f" + viewerCount).setScore(score--);
+        // 시청자 수 (소환된 시청자만)
+        objective.getScore("§e시청자: §f" + summonedCount).setScore(score--);
 
         // 빈 줄 (맨 아래)
         objective.getScore("   ").setScore(score--);
@@ -91,7 +99,7 @@ public class ScoreboardManager {
     }
 
     /**
-     * 스코어보드 업데이트 - 시청자 수
+     * 스코어보드 업데이트 - 시청자 수 (소환된 시청자만)
      */
     public static void updateViewerCount(Player player, int count) {
         Scoreboard scoreboard = player.getScoreboard();
@@ -103,8 +111,21 @@ public class ScoreboardManager {
                 .filter(entry -> entry.startsWith("§e시청자:"))
                 .forEach(scoreboard::resetScores);
 
-        // 새로운 시청자 수 추가
-        objective.getScore("§e시청자: §f" + count).setScore(2);
+        // 팀 정보 확인해서 소환된 시청자 수 계산
+        TeamManager teamManager = staticTeamManager;
+        if (teamManager != null) {
+            TeamManager.Team team = teamManager.getTeam(player);
+            if (team == null) {
+                team = getStreamerTeam(player, teamManager);
+            }
+
+            if (team != null) {
+                int summonedCount = teamManager.getSummonedViewerCount(team.getStreamer());
+                objective.getScore("§e시청자: §f" + summonedCount).setScore(2);
+            }
+        } else {
+            objective.getScore("§e시청자: §f" + count).setScore(2);
+        }
     }
 
     /**

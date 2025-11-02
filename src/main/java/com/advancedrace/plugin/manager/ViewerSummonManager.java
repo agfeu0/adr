@@ -61,6 +61,9 @@ public class ViewerSummonManager {
         for (int i = 0; i < actualCount; i++) {
             Player viewer = waitingPlayers.get(i);
 
+            // 소환된 플레이어 표시
+            teamManager.markViewerAsSummoned(streamerName, viewer.getName());
+
             // 소환된 플레이어는 후순위로 설정
             teamManager.setSpawnTier(viewer, 2);
 

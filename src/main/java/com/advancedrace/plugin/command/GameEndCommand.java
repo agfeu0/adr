@@ -118,6 +118,9 @@ public class GameEndCommand implements CommandExecutor {
         // 모든 플레이어의 사망 횟수 초기화
         teamManager.clearAllDeathCounts();
 
+        // 모든 소환된 시청자 정보 초기화
+        teamManager.clearAllSummonedViewers();
+
         // 발전과제 팀 점수 초기화
         if (advancedRace.getAdvancementListener() != null) {
             advancedRace.getAdvancementListener().initializeTeamScores();
