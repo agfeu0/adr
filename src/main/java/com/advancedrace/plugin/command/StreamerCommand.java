@@ -1,6 +1,7 @@
 package com.advancedrace.plugin.command;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,8 +61,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
         // 팀 생성
         if (teamManager.createTeam(streamerName, colorCode)) {
             String colorName = colorCode != null ? getColorName(colorCode) : "랜덤";
-            player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 스트리머 팀이 생성되었습니다! (색깔: " + colorCode + colorName + ChatColor.GREEN + ")");
-            player.sendMessage(ChatColor.YELLOW + "시청자들이 /팀선택 명령어로 팀에 합류할 수 있습니다.");
+            Bukkit.broadcastMessage(ChatColor.GREEN + "✓ " + streamerName + " 스트리머 팀이 생성되었습니다(색깔: " + colorCode + colorName + ChatColor.GREEN + ")");
             return true;
         } else {
             player.sendMessage(ChatColor.RED + "팀 생성에 실패했습니다.");

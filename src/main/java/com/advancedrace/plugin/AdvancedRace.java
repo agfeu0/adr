@@ -4,7 +4,6 @@ import com.advancedrace.plugin.command.GameEndCommand;
 import com.advancedrace.plugin.command.GameStartCommand;
 import com.advancedrace.plugin.command.StreamerCommand;
 import com.advancedrace.plugin.command.TeamSelectCommand;
-import com.advancedrace.plugin.command.TeleportCommand;
 import com.advancedrace.plugin.listener.AdvancementListener;
 import com.advancedrace.plugin.listener.BeaconListener;
 import com.advancedrace.plugin.listener.GUIListener;
@@ -21,6 +20,7 @@ import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
 import com.advancedrace.plugin.task.DistanceLimitTask;
+import com.advancedrace.plugin.task.GameTimerTask;
 import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,10 +31,16 @@ public class AdvancedRace extends JavaPlugin {
     private AdvancementManager advancementManager;
     private ViewerSummonManager viewerSummonManager;
     private GameStateManager gameStateManager;
+    private GameTimerTask gameTimerTask;
+    private AdvancementListener advancementListener;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        // Config 파일 생성 및 로드
+        saveDefaultConfig();
+        reloadConfig();
 
         // 팀 매니저 초기화
         teamManager = new TeamManager();
@@ -72,9 +78,6 @@ public class AdvancedRace extends JavaPlugin {
         if (getCommand("팀선택") != null) {
             getCommand("팀선택").setExecutor(new TeamSelectCommand(teamManager));
         }
-        if (getCommand("발전과제_tp") != null) {
-            getCommand("발전과제_tp").setExecutor(new TeleportCommand());
-        }
         if (getCommand("시작") != null) {
             getCommand("시작").setExecutor(new GameStartCommand(gameStateManager, teamManager));
             getLogger().info("[AdvancedRace] /시작 명령어 등록됨");
@@ -96,7 +99,8 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HardcoreDeathListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PvPListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new StreamerDeathListener(teamManager), this);
-        getServer().getPluginManager().registerEvents(new AdvancementListener(teamManager, advancementManager, viewerSummonManager), this);
+        advancementListener = new AdvancementListener(teamManager, advancementManager, viewerSummonManager);
+        getServer().getPluginManager().registerEvents(advancementListener, this);
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(teamManager), this);
 
@@ -117,5 +121,39 @@ public class AdvancedRace extends JavaPlugin {
 
     public TeamManager getTeamManager() {
         return teamManager;
+    }
+
+    public GameStateManager getGameStateManager() {
+        return gameStateManager;
+    }
+
+    public void setGameTimerTask(GameTimerTask timerTask) {
+        this.gameTimerTask = timerTask;
+    }
+
+    public GameTimerTask getGameTimerTask() {
+        return gameTimerTask;
+    }
+
+    /**
+     * Config에서 게임 시간 가져오기 (초 단위)
+     */
+    public long getGameDurationSeconds() {
+        return getConfig().getLong("game-duration-seconds", 3600);
+    }
+
+    /**
+     * Config에서 랜덤 텔레포트 범위 가져오기 (블록 단위)
+     */
+    public int getRandomTeleportRange() {
+        return getConfig().getInt("random-teleport-range", 3000);
+    }
+
+    public AdvancementListener getAdvancementListener() {
+        return advancementListener;
+    }
+
+    public AdvancementManager getAdvancementManager() {
+        return advancementManager;
     }
 }

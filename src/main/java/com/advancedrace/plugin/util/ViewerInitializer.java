@@ -1,12 +1,17 @@
 package com.advancedrace.plugin.util;
 
+import com.advancedrace.plugin.manager.TeamManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 public class ViewerInitializer {
 
@@ -14,6 +19,13 @@ public class ViewerInitializer {
      * 시청자 설정 초기화
      */
     public static void initializeViewer(Player player) {
+        initializeViewer(player, null);
+    }
+
+    /**
+     * 시청자 설정 초기화 (스폰 순위 포함)
+     */
+    public static void initializeViewer(Player player, TeamManager teamManager) {
         // 1. 인벤토리 5칸 제한 (베리어로 차단)
         setBarrierSlots(player);
 
@@ -25,6 +37,11 @@ public class ViewerInitializer {
 
         // 4. 5번 슬롯에 나침반 고정
         setCompassSlot5(player);
+
+        // 5. 스폰 순위에 따른 지연 (후순위인 경우 5초 지연)
+        if (teamManager != null && teamManager.getSpawnTier(player) == 2) {
+            applySpawnDelay(player, teamManager);
+        }
     }
 
     /**
@@ -70,6 +87,8 @@ public class ViewerInitializer {
         if (compass.getItemMeta() instanceof CompassMeta) {
             CompassMeta meta = (CompassMeta) compass.getItemMeta();
             meta.setDisplayName("§b팀장 위치");
+            // 모든 인챈트 제거
+            meta.removeEnchantments();
             compass.setItemMeta(meta);
         }
         player.getInventory().setItem(4, compass); // 슬롯 5 = 인덱스 4
@@ -84,16 +103,9 @@ public class ViewerInitializer {
             return;
         }
 
-        ItemStack item = player.getInventory().getItem(4);
-        if (item == null || item.getType() != Material.COMPASS) {
-            return;
-        }
-
-        if (!(item.getItemMeta() instanceof CompassMeta)) {
-            return;
-        }
-
-        CompassMeta meta = (CompassMeta) item.getItemMeta();
+        // 나침반을 완전히 다시 생성
+        ItemStack compass = new ItemStack(Material.COMPASS);
+        CompassMeta meta = (CompassMeta) compass.getItemMeta();
         if (meta == null) {
             return;
         }
@@ -101,6 +113,54 @@ public class ViewerInitializer {
         meta.setDisplayName("§b" + streamerName + " 팀장");
         meta.setLodestone(streamer.getLocation());
         meta.setLodestoneTracked(true);
-        item.setItemMeta(meta);
+        // 모든 인챈트 제거
+        meta.removeEnchantments();
+        compass.setItemMeta(meta);
+        player.getInventory().setItem(4, compass);
     }
+
+    /**
+     * 플레이어에게 스폰 지연 적용 (5초)
+     */
+    private static void applySpawnDelay(Player player, TeamManager teamManager) {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRace");
+        if (plugin == null) {
+            return;
+        }
+
+        // 5초 후 해제 (메시지 없음)
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            // 5초 경과 후 특별한 처리 없음
+        }, 100); // 100틱 = 5초
+    }
+
+    /**
+     * 월드 이름을 한글로 변환
+     */
+    private static String getWorldNameKorean(String worldName) {
+        return switch (worldName.toLowerCase()) {
+            case "world" -> "오버월드";
+            case "world_nether" -> "네더";
+            case "world_the_end" -> "엔더";
+            default -> worldName;
+        };
+    }
+
+    /**
+     * 플레이어에게 액션바로 스트리머 월드 정보 표시
+     */
+    public static void showStreamerWorldActionBar(Player player, Location streamerLocation) {
+        if (streamerLocation == null) {
+            return;
+        }
+
+        String worldName = getWorldNameKorean(streamerLocation.getWorld().getName());
+
+        Component message = Component.text("팀장이 ", NamedTextColor.YELLOW)
+                .append(Component.text(worldName, NamedTextColor.GOLD))
+                .append(Component.text("에 있습니다", NamedTextColor.YELLOW));
+
+        player.sendActionBar(message);
+    }
+
 }

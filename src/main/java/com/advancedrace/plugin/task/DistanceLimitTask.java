@@ -1,6 +1,7 @@
 package com.advancedrace.plugin.task;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -40,7 +41,14 @@ public class DistanceLimitTask extends BukkitRunnable {
                 continue;
             }
 
-            // 거리 계산
+            // 월드 확인 (다른 월드면 액션바에 메시지 표시)
+            if (!player.getWorld().equals(streamer.getWorld())) {
+                ViewerInitializer.showStreamerWorldActionBar(player, streamer.getLocation());
+                player.removePotionEffect(PotionEffectType.DARKNESS);
+                continue;
+            }
+
+            // 거리 계산 (같은 월드일 때만)
             double distance = player.getLocation().distance(streamer.getLocation());
 
             if (distance > MAX_DISTANCE) {
@@ -50,6 +58,9 @@ public class DistanceLimitTask extends BukkitRunnable {
                 // 25칸 이내면 어둠 효과 제거
                 player.removePotionEffect(PotionEffectType.DARKNESS);
             }
+
+            // 나침반 업데이트 (스트리머 위치 추적)
+            ViewerInitializer.updateCompass(player, streamerName);
         }
     }
 

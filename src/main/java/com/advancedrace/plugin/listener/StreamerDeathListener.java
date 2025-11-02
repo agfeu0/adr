@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,9 @@ public class StreamerDeathListener implements Listener {
             return;
         }
 
+        // 사망 캔슬
+        event.setCancelled(true);
+
         // 팀의 시청자 목록 (스트리머 제외)
         List<Player> viewers = new ArrayList<>();
         for (Player player : team.getPlayers()) {
@@ -56,6 +58,10 @@ public class StreamerDeathListener implements Listener {
             // 시청자가 없으면 스트리머에게 3분간 행동 불가 효과
             applyInactionEffect(deadPlayer);
         }
+
+        // 스트리머 즉시 체력 회복 (최대 체력)
+        deadPlayer.setHealth(deadPlayer.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue());
+        deadPlayer.sendMessage(ChatColor.GREEN + "✓ 체력이 회복되었습니다!");
     }
 
     /**

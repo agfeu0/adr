@@ -9,6 +9,10 @@ public class TeamManager {
     private Map<String, Team> teams = new HashMap<>();
     private Map<Player, String> playerTeams = new HashMap<>();
     private Map<String, String> streamerTeams = new HashMap<>(); // 스트리머 이름 -> 팀 이름 매핑
+    private Set<String> playersWithDeathChance = new HashSet<>(); // 1회 팀 변경 기회가 있는 플레이어
+    private Set<String> spectatorsWithChance = new HashSet<>(); // 스펙테이터 모드인 플레이어 (팀 변경 기회 있음)
+    private Map<String, Integer> playerSpawnTier = new HashMap<>(); // 플레이어 스폰 순위 (1 = 먼저, 2 = 나중)
+    private Map<String, Integer> playerDeathCount = new HashMap<>(); // 플레이어 사망 횟수
 
     /**
      * 새로운 팀 생성 (스트리머가 팀장)
@@ -103,6 +107,15 @@ public class TeamManager {
     }
 
     /**
+     * 모든 팀 제거
+     */
+    public void removeAllTeams() {
+        teams.clear();
+        playerTeams.clear();
+        streamerTeams.clear();
+    }
+
+    /**
      * 플레이어 제거
      */
     public void removePlayer(Player player) {
@@ -110,6 +123,102 @@ public class TeamManager {
         if (teamName != null && teams.containsKey(teamName)) {
             teams.get(teamName).removePlayer(player);
         }
+    }
+
+    /**
+     * 플레이어에게 1회 팀 변경 기회 부여 (사망 시)
+     */
+    public void grantDeathChance(Player player) {
+        playersWithDeathChance.add(player.getName());
+    }
+
+    /**
+     * 플레이어가 팀 변경 기회가 있는지 확인
+     */
+    public boolean hasDeathChance(Player player) {
+        return playersWithDeathChance.contains(player.getName());
+    }
+
+    /**
+     * 플레이어의 팀 변경 기회 사용 (제거)
+     */
+    public void useDeathChance(Player player) {
+        playersWithDeathChance.remove(player.getName());
+    }
+
+    /**
+     * 모든 플레이어의 팀 변경 기회 초기화
+     */
+    public void clearAllDeathChances() {
+        playersWithDeathChance.clear();
+        spectatorsWithChance.clear();
+    }
+
+    /**
+     * 플레이어를 스펙테이터로 등록 (팀 변경 기회 있음)
+     */
+    public void markAsSpectator(Player player) {
+        spectatorsWithChance.add(player.getName());
+    }
+
+    /**
+     * 플레이어가 스펙테이터 모드인지 확인
+     */
+    public boolean isSpectatorWithChance(Player player) {
+        return spectatorsWithChance.contains(player.getName());
+    }
+
+    /**
+     * 플레이어를 스펙테이터 목록에서 제거 (팀 변경 후)
+     */
+    public void removeFromSpectator(Player player) {
+        spectatorsWithChance.remove(player.getName());
+    }
+
+    /**
+     * 플레이어의 스폰 순위 설정
+     * @param player 플레이어
+     * @param tier 1 = 먼저 스폰, 2 = 나중에 스폰
+     */
+    public void setSpawnTier(Player player, int tier) {
+        playerSpawnTier.put(player.getName(), tier);
+    }
+
+    /**
+     * 플레이어의 스폰 순위 반환 (기본값: 1)
+     */
+    public int getSpawnTier(Player player) {
+        return playerSpawnTier.getOrDefault(player.getName(), 1);
+    }
+
+    /**
+     * 모든 플레이어의 스폰 순위 초기화
+     */
+    public void clearAllSpawnTiers() {
+        playerSpawnTier.clear();
+    }
+
+    /**
+     * 플레이어의 사망 횟수 증가
+     */
+    public void incrementDeathCount(Player player) {
+        String playerName = player.getName();
+        int currentCount = playerDeathCount.getOrDefault(playerName, 0);
+        playerDeathCount.put(playerName, currentCount + 1);
+    }
+
+    /**
+     * 플레이어의 사망 횟수 반환 (기본값: 0)
+     */
+    public int getDeathCount(Player player) {
+        return playerDeathCount.getOrDefault(player.getName(), 0);
+    }
+
+    /**
+     * 모든 플레이어의 사망 횟수 초기화
+     */
+    public void clearAllDeathCounts() {
+        playerDeathCount.clear();
     }
 
     public static class Team {

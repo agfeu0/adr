@@ -20,19 +20,57 @@ public class PlayerChatListener implements Listener {
     public void onPlayerChat(AsyncChatEvent event) {
         Player player = event.getPlayer();
         TeamManager.Team team = teamManager.getTeam(player);
+        boolean isStreamer = false;
+
+        // 플레이어가 속한 팀이 없으면, 스트리머인지 확인
+        if (team == null) {
+            team = getStreamerTeam(player);
+            if (team != null) {
+                isStreamer = true;
+            }
+        }
 
         // 팀에 속하면 팀 정보 추가
         if (team != null) {
-            Component prefix = Component.text("[" + team.getStreamer() + "팀] ", net.kyori.adventure.text.format.TextColor.color(getColorValue(team.getColor())));
-            event.renderer((source, sourceDisplayName, message, viewer) -> {
-                return Component.text()
-                        .append(prefix)
-                        .append(sourceDisplayName)
-                        .append(Component.text(": "))
-                        .append(message)
-                        .build();
-            });
+            final TeamManager.Team finalTeam = team;
+            final boolean finalIsStreamer = isStreamer;
+            final String playerName = player.getName();
+
+            if (isStreamer) {
+                // 스트리머: 접두사 없음, 색깔만 적용
+                event.renderer((source, sourceDisplayName, message, viewer) -> {
+                    return Component.text()
+                            .append(Component.text(playerName, net.kyori.adventure.text.format.TextColor.color(getColorValue(finalTeam.getColor()))))
+                            .append(Component.text(": "))
+                            .append(message)
+                            .build();
+                });
+            } else {
+                // 시청자: [팀이름] 접두사 + 닉네임 (모두 팀 색깔)
+                Component prefix = Component.text("[" + finalTeam.getStreamer() + "팀] ", net.kyori.adventure.text.format.TextColor.color(getColorValue(finalTeam.getColor())));
+                Component viewerName = Component.text(playerName, net.kyori.adventure.text.format.TextColor.color(getColorValue(finalTeam.getColor())));
+                event.renderer((source, sourceDisplayName, message, viewer) -> {
+                    return Component.text()
+                            .append(prefix)
+                            .append(viewerName)
+                            .append(Component.text(": "))
+                            .append(message)
+                            .build();
+                });
+            }
         }
+    }
+
+    /**
+     * 플레이어가 스트리머인 경우 해당 팀 반환
+     */
+    private TeamManager.Team getStreamerTeam(Player player) {
+        for (String streamerName : teamManager.getStreamerNames()) {
+            if (streamerName.equals(player.getName())) {
+                return teamManager.getTeamByStreamer(streamerName);
+            }
+        }
+        return null;
     }
 
     private int getColorValue(String colorCode) {

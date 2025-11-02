@@ -12,9 +12,6 @@ commands:
   팀선택:
     description: 팀 선택 GUI 열기
     usage: /팀선택
-  발전과제_tp:
-    description: 신호기 위치로 텔레포트
-    usage: /발전과제_tp <스트리머이름>
   시작:
     description: 게임 시작
     usage: /시작

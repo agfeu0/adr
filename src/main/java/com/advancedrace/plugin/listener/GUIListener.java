@@ -2,7 +2,7 @@ package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.gui.TeamSelectInventoryHolder;
 import com.advancedrace.plugin.manager.TeamManager;
-import com.advancedrace.plugin.util.ViewerInitializer;
+import com.advancedrace.plugin.util.ScoreboardManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +21,7 @@ public class GUIListener implements Listener {
         }
         return false;
     }
+
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -51,14 +52,17 @@ public class GUIListener implements Listener {
 
         // 팀에 추가
         if (teamManager.addPlayerToTeam(player, streamerName)) {
-            // 시청자 초기화 (OP나 스트리머 아닐 때만)
-            if (!player.isOp() && !isStreamer(player, teamManager)) {
-                ViewerInitializer.initializeViewer(player);
-                ViewerInitializer.updateCompass(player, streamerName);
-            }
+            // SpawnTier를 1로 설정 (대기 중 상태)
+            teamManager.setSpawnTier(player, 1);
+
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그)
             PlayerNameListener.updatePlayerDisplay(player, teamManager);
+
+            // 스코어보드 설정
+            ScoreboardManager.setupScoreboard(player, teamManager);
+
             player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 팀에 합류했습니다!");
+            player.sendMessage(ChatColor.YELLOW + "팀장이 발전과제를 달성하면 게임에 소환됩니다!");
             player.closeInventory();
         } else {
             player.sendMessage(ChatColor.RED + "팀 합류에 실패했습니다.");
