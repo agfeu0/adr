@@ -61,6 +61,19 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
+        // 최근 5초 내에 죽은 플레이어가 있으면 발전과제 점수 제외
+        long currentTime = System.currentTimeMillis();
+        for (String deadPlayerName : new java.util.ArrayList<>(recentDeathTimes.keySet())) {
+            long deathTime = recentDeathTimes.get(deadPlayerName);
+            if (currentTime - deathTime < 5000) { // 5초 이내
+                // 플레이어가 죽었으므로 점수 제외
+                return;
+            } else if (currentTime - deathTime >= 5000) {
+                // 오래된 기록 제거
+                recentDeathTimes.remove(deadPlayerName);
+            }
+        }
+
         // combat 관련 발전과제는 무시 (의도하지 않은 소환 방지)
         if (advancementName.contains("combat") || advancementName.contains("kill")) {
             return;
