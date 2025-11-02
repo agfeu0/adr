@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.command;
 
+import com.advancedrace.plugin.listener.PlayerNameListener;
 import com.advancedrace.plugin.manager.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,6 +64,17 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
             String colorName = colorCode != null ? getColorName(colorCode) : "랜덤";
             Bukkit.broadcastMessage(ChatColor.GREEN + "✓ " + streamerName + " 스트리머 팀이 생성되었습니다(색깔: " + colorCode + colorName + ChatColor.GREEN + ")");
             Bukkit.broadcastMessage(ChatColor.YELLOW + "시청자들이 /팀선택 명령어로 팀에 합류할 수 있습니다.");
+
+            // 스트리머 플레이어가 온라인이면 디스플레이 업데이트 (1틱 지연)
+            Player streamer = Bukkit.getPlayer(streamerName);
+            if (streamer != null && streamer.isOnline()) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(
+                        Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                        () -> PlayerNameListener.updatePlayerDisplay(streamer, teamManager),
+                        1
+                );
+            }
+
             return true;
         } else {
             player.sendMessage(ChatColor.RED + "팀 생성에 실패했습니다.");
