@@ -66,18 +66,11 @@ public class AdvancementListener implements Listener {
             return;
         }
 
-        // 이미 다른 스트리머가 달성한 발전과제인지 확인
-        if (advancementManager.isCompleted(advancementName)) {
-            return;
-        }
-
-        // 발전과제 완료 표시
-        advancementManager.markCompleted(advancementName);
-
         // Display 정보로 일반/특수 구분
         int summonCount = 1; // 기본값: 일반 = 1명
         int scorePoints = 1; // 기본값: 일반 = 1점
         AdvancementDisplay display = advancement.getDisplay();
+        boolean isChallenge = false;
 
         // 보라색(Challenge) 발전과제는 3명 소환, 3점
         if (display != null) {
@@ -85,7 +78,18 @@ public class AdvancementListener implements Listener {
             if (displayInfo.contains("CHALLENGE") || displayInfo.contains("Challenge")) {
                 summonCount = 3; // 특수(보라색) = 3명
                 scorePoints = 3; // 특수(보라색) = 3점
+                isChallenge = true;
             }
+        }
+
+        // 특수 발전과제(Challenge)만 중복 체크 (이미 다른 스트리머가 달성했으면 무시)
+        if (isChallenge && advancementManager.isCompleted(advancementName)) {
+            return;
+        }
+
+        // 발전과제 완료 표시 (특수 발전과제만)
+        if (isChallenge) {
+            advancementManager.markCompleted(advancementName);
         }
 
         // 시청자 소환
