@@ -58,6 +58,11 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
+        // 플레이어 킬 관련 발전과제는 무시 (의도하지 않은 소환 방지)
+        if (advancementName.contains("kill_player") || advancementName.contains("combat")) {
+            return;
+        }
+
         // 이미 다른 스트리머가 달성한 발전과제인지 확인
         if (advancementManager.isCompleted(advancementName)) {
             return;
