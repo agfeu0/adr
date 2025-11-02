@@ -1,6 +1,7 @@
 package com.advancedrace.plugin.command;
 
 import com.advancedrace.plugin.AdvancedRace;
+import com.advancedrace.plugin.listener.PlayerNameListener;
 import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
@@ -146,8 +147,12 @@ public class GameStartCommand implements CommandExecutor {
                 // 나침반 추적 시작
                 advancedRace.getCompassTrackingManager().start();
 
-                // 탭 리스트 팀별 정렬 (1틱 지연 - Scoreboard 팀 생성 완료 대기)
+                // 탭 리스트 팀별 정렬 및 네임태그 색상 재설정 (1틱 지연 - Scoreboard 팀 생성 완료 대기)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    // 모든 온라인 플레이어의 네임태그 색상 재설정
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        PlayerNameListener.updatePlayerDisplay(p, teamManager);
+                    }
                     TablistManager.organizeTablist(teamManager);
                 }, 1);
 
