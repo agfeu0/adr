@@ -87,9 +87,9 @@ public class AdvancementListener implements Listener {
         // PvP 킬 직후 5초 내에는 PvP/전투 관련 발전과제는 skip
         if (hasRecentPvPKill) {
             // PvP 킬과 관련된 발전과제 필터링
-            if (advancementName.contains("take_aim") ||           // 정조준 (화살)
-                advancementName.contains("throw_trident") ||      // 부러진 화살/정조준 삼지창
-                advancementName.contains("shoot_at_target") ||    // 준비하시고... 쏘세요!
+            if (advancementName.contains("shoot_arrow") ||        // 정조준 (화살 사격)
+                advancementName.contains("throw_trident") ||      // 준비하시고... 쏘세요! (삼지창)
+                advancementName.contains("shoot_at_target") ||    // 과녁 맞추기
                 advancementName.contains("adventure")) {           // adventure 카테고리 전체
                 return;
             }
