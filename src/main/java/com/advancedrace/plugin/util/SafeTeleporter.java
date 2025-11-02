@@ -53,8 +53,8 @@ public class SafeTeleporter {
             double randomX = minX + (random.nextDouble() * (maxX - minX));
             double randomZ = minZ + (random.nextDouble() * (maxZ - minZ));
 
-            // 안전한 높이 찾기 (y=150부터 y=100까지 탐색 - 노출된 지표면)
-            for (int y = 150; y >= 100; y--) {
+            // 안전한 높이 찾기 (y=150부터 y=80까지 탐색 - 노출된 지표면)
+            for (int y = 150; y >= 80; y--) {
                 Block footBlock = world.getBlockAt((int) randomX, y - 1, (int) randomZ);
                 Block bodyBlock = world.getBlockAt((int) randomX, y, (int) randomZ);
                 Block headBlock = world.getBlockAt((int) randomX, y + 1, (int) randomZ);
