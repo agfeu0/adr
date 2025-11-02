@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -55,13 +55,14 @@ public class CompassTrackingManager {
                     }
 
                     // 나침반 메타 업데이트
-                    ItemMeta meta = compass.getItemMeta();
+                    CompassMeta meta = (CompassMeta) compass.getItemMeta();
                     if (meta == null) {
                         continue;
                     }
 
-                    // 나침반이 팀장을 가리키도록 설정
-                    player.setCompassTarget(streamer.getLocation());
+                    // 팀장 위치로 로드스톤 설정 (계속 업데이트)
+                    meta.setLodestone(streamer.getLocation());
+                    meta.setLodestoneTracked(false); // 블록 없이도 방향만 가리킴
                     meta.setDisplayName("§b" + streamerName + " 팀장");
                     compass.setItemMeta(meta);
 
