@@ -63,7 +63,14 @@ public class GUIListener implements Listener {
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그) - 1틱 지연
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
-                    () -> PlayerNameListener.updatePlayerDisplay(player, teamManager),
+                    () -> {
+                        PlayerNameListener.updatePlayerDisplay(player, teamManager);
+                        // 스트리머의 표시도 함께 업데이트
+                        Player streamer = Bukkit.getPlayer(streamerName);
+                        if (streamer != null && streamer.isOnline()) {
+                            PlayerNameListener.updatePlayerDisplay(streamer, teamManager);
+                        }
+                    },
                     1
             );
 
