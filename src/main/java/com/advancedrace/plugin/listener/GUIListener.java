@@ -3,6 +3,7 @@ package com.advancedrace.plugin.listener;
 import com.advancedrace.plugin.gui.TeamSelectInventoryHolder;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,8 +56,12 @@ public class GUIListener implements Listener {
             // SpawnTier를 1로 설정 (대기 중 상태)
             teamManager.setSpawnTier(player, 1);
 
-            // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그)
-            PlayerNameListener.updatePlayerDisplay(player, teamManager);
+            // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그) - 1틱 지연
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                    () -> PlayerNameListener.updatePlayerDisplay(player, teamManager),
+                    1
+            );
 
             // 스코어보드 설정
             ScoreboardManager.setupScoreboard(player, teamManager);
