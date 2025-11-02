@@ -81,15 +81,17 @@ public class ViewerInitializer {
     }
 
     /**
-     * 5번 슬롯에 나침반 설정
+     * 5번 슬롯에 나침반 설정 (임시 - 팀 참여 후 updateCompass로 업데이트됨)
      */
     public static void setCompassSlot5(Player player) {
         ItemStack compass = new ItemStack(Material.COMPASS);
-        if (compass.getItemMeta() instanceof CompassMeta) {
-            CompassMeta meta = (CompassMeta) compass.getItemMeta();
+        CompassMeta meta = (CompassMeta) compass.getItemMeta();
+        if (meta != null) {
             meta.setDisplayName("§b팀장 위치");
             // 모든 인챈트 제거
             meta.removeEnchantments();
+            // 인챈트 표시 숨김 플래그 추가
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             compass.setItemMeta(meta);
         }
         player.getInventory().setItem(4, compass); // 슬롯 5 = 인덱스 4
