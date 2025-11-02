@@ -24,15 +24,6 @@ public class BlockPlaceListener implements Listener {
         if (event.getBlockPlaced().getType() == Material.BARRIER) {
             event.setCancelled(true);
             player.sendMessage(ChatColor.RED + "베리어 블록은 설치할 수 없습니다.");
-            return;
-        }
-
-        // 시청자는 블록 설치 불가 (스트리머는 가능)
-        TeamManager.Team team = teamManager.getTeam(player);
-        if (team != null) {
-            // 시청자는 설치 불가
-            event.setCancelled(true);
-            player.sendMessage(ChatColor.RED + "시청자는 블록을 설치할 수 없습니다.");
         }
     }
 }
