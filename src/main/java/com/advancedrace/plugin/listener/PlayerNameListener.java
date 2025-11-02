@@ -76,9 +76,9 @@ public class PlayerNameListener implements Listener {
             }
 
             if (isStreamer) {
-                // 스트리머: 닉네임에 색깔 적용 (시청자와 동일한 방식)
-                Component listName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
-                player.playerListName(listName);
+                // 스트리머: Scoreboard 팀 색상만 적용 (playerListName은 설정하지 않음)
+                // playerListName을 설정하지 않으면 Scoreboard 팀 색상이 적용됨
+                player.playerListName(null);
 
                 Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
                 player.customName(displayName);
