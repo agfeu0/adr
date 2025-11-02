@@ -14,7 +14,9 @@
       "Bash(then echo \"✓ Build successful\")",
       "Bash(else echo \"✗ Build failed\")",
       "Bash(fi)",
-      "Bash(if [ -f target/AdvancedRace-1.0.0.jar ])"
+      "Bash(if [ -f target/AdvancedRace-1.0.0.jar ])",
+      "Bash(git reset:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

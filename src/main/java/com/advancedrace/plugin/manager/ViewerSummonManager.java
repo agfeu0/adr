@@ -76,6 +76,9 @@ public class ViewerSummonManager {
             // 팀장을 가리키는 나침반 지급
             ViewerInitializer.updateCompass(viewer, streamerName);
 
+            // 나침반 자동 추적 태스크 시작 (3초마다 팀장 위치 업데이트)
+            startCompassTracking(viewer, streamerName);
+
             // 스코어보드 설정 및 시청자 수 업데이트
             com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
             com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
@@ -151,6 +154,32 @@ public class ViewerSummonManager {
         meta.setPower(2); // 폭죽 높이
 
         firework.setFireworkMeta(meta);
+    }
+
+    /**
+     * 나침반 자동 추적 시작 (3초마다 팀장 위치 업데이트)
+     */
+    private void startCompassTracking(Player viewer, String streamerName) {
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRace");
+        if (plugin == null) {
+            return;
+        }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            // 플레이어가 여전히 온라인이고 해당 팀에 속해있는지 확인
+            if (!viewer.isOnline()) {
+                return; // 태스크는 계속 실행되지만 아무것도 하지 않음
+            }
+
+            // 팀장 정보 확인
+            TeamManager.Team team = teamManager.getTeam(viewer);
+            if (team == null || !team.getStreamer().equals(streamerName)) {
+                return; // 팀이 없거나 팀장이 다르면 중단
+            }
+
+            // 나침반 위치 업데이트
+            ViewerInitializer.updateCompass(viewer, streamerName);
+        }, 0, 60); // 60틱 = 3초, 반복
     }
 
     /**
