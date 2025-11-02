@@ -255,6 +255,20 @@ public class TeamManager {
         summonedViewers.clear();
     }
 
+    /**
+     * 스트리머의 소환된 시청자 목록 반환
+     */
+    public Set<String> getSummonedViewersSet(String streamerName) {
+        return new HashSet<>(summonedViewers.getOrDefault(streamerName, new HashSet<>()));
+    }
+
+    /**
+     * 소환된 시청자 정보 일괄 설정 (데이터 로드 시)
+     */
+    public void setSummonedViewers(String streamerName, Set<String> viewers) {
+        summonedViewers.put(streamerName, new HashSet<>(viewers));
+    }
+
     public static class Team {
         private String name;
         private String streamer;

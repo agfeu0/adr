@@ -22,9 +22,11 @@ public class DataPersistence {
 
     // 메모리에 저장된 팀 정보 (플레이어가 로드될 때까지 유지)
     private static Map<String, String> playerTeamMap = new HashMap<>();
+    // 메모리에 저장된 소환된 시청자 정보
+    private static Map<String, Set<String>> summonedViewersMap = new HashMap<>();
 
     /**
-     * 게임 상태를 JSON 파일로 저장 (점수 정보, 남은시간 포함)
+     * 게임 상태를 JSON 파일로 저장 (점수 정보, 남은시간, 소환된 시청자 정보 포함)
      */
     public static void saveGameData(TeamManager teamManager, Map<String, Integer> teamScores, long remainingSeconds) {
         try {
@@ -46,7 +48,7 @@ public class DataPersistence {
                     teamObj.addProperty("streamer", streamerName);
                     teamObj.addProperty("color", team.getColor());
 
-                    // 팀원 정보 저장
+                    // 팀원 정보 저장 (플레이어 이름 배열)
                     JsonArray playersArray = new JsonArray();
                     for (Player player : team.getPlayers()) {
                         playersArray.add(player.getName());
@@ -56,6 +58,14 @@ public class DataPersistence {
                     // 팀 점수 저장
                     int score = teamScores.getOrDefault(streamerName, 0);
                     teamObj.addProperty("score", score);
+
+                    // 소환된 시청자 저장
+                    JsonArray summonedArray = new JsonArray();
+                    Set<String> summonedViewers = teamManager.getSummonedViewersSet(streamerName);
+                    for (String viewerName : summonedViewers) {
+                        summonedArray.add(viewerName);
+                    }
+                    teamObj.add("summoned", summonedArray);
 
                     teamsArray.add(teamObj);
                 }
@@ -118,6 +128,16 @@ public class DataPersistence {
                             // 플레이어가 오프라인이면 메모리에 저장 (나중에 입장할 때 자동 추가)
                             playerTeamMap.put(playerName, streamerName);
                         }
+                    }
+
+                    // 소환된 시청자 정보 복원
+                    if (teamObj.has("summoned")) {
+                        JsonArray summonedArray = teamObj.getAsJsonArray("summoned");
+                        Set<String> summonedViewers = new HashSet<>();
+                        for (int j = 0; j < summonedArray.size(); j++) {
+                            summonedViewers.add(summonedArray.get(j).getAsString());
+                        }
+                        teamManager.setSummonedViewers(streamerName, summonedViewers);
                     }
                 }
 
