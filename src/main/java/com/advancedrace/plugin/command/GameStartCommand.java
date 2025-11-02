@@ -6,6 +6,7 @@ import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.task.GameTimerTask;
 import com.advancedrace.plugin.util.SafeTeleporter;
+import com.advancedrace.plugin.util.TablistManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -141,6 +142,9 @@ public class GameStartCommand implements CommandExecutor {
                 for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
                     p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                 }
+
+                // 탭 리스트 팀별 정렬
+                TablistManager.organizeTablist(teamManager);
 
                 // 나침반 추적 시작
                 advancedRace.getCompassTrackingManager().start();
