@@ -269,6 +269,16 @@ public class TeamManager {
         summonedViewers.put(streamerName, new HashSet<>(viewers));
     }
 
+    /**
+     * 소환된 시청자 제거 (팀 변경 시)
+     */
+    public void removeSummonedViewer(String streamerName, String viewerName) {
+        Set<String> viewers = summonedViewers.get(streamerName);
+        if (viewers != null) {
+            viewers.remove(viewerName);
+        }
+    }
+
     public static class Team {
         private String name;
         private String streamer;

@@ -3,6 +3,7 @@ package com.advancedrace.plugin.manager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -48,10 +49,14 @@ public class DataPersistence {
                     teamObj.addProperty("streamer", streamerName);
                     teamObj.addProperty("color", team.getColor());
 
-                    // 팀원 정보 저장 (플레이어 이름 배열)
+                    // 팀원 정보 저장 (플레이어 상태 포함)
                     JsonArray playersArray = new JsonArray();
                     for (Player player : team.getPlayers()) {
-                        playersArray.add(player.getName());
+                        JsonObject playerObj = new JsonObject();
+                        playerObj.addProperty("name", player.getName());
+                        playerObj.addProperty("spawnTier", teamManager.getSpawnTier(player)); // SpawnTier 저장
+                        playerObj.addProperty("deathCount", teamManager.getDeathCount(player)); // 사망 횟수 저장
+                        playersArray.add(playerObj);
                     }
                     teamObj.add("players", playersArray);
 
@@ -117,13 +122,32 @@ public class DataPersistence {
                     // 팀 생성
                     teamManager.createTeam(streamerName, color);
 
-                    // 플레이어 추가
+                    // 플레이어 추가 (상태 정보 포함)
                     JsonArray playersArray = teamObj.getAsJsonArray("players");
                     for (int j = 0; j < playersArray.size(); j++) {
-                        String playerName = playersArray.get(j).getAsString();
+                        JsonElement playerElement = playersArray.get(j);
+                        String playerName;
+                        int spawnTier = 1; // 기본값
+                        int deathCount = 0; // 기본값
+
+                        // 호환성: 문자열 형식(기존)과 객체 형식(새로운) 모두 지원
+                        if (playerElement.isJsonObject()) {
+                            JsonObject playerObj = playerElement.getAsJsonObject();
+                            playerName = playerObj.get("name").getAsString();
+                            spawnTier = playerObj.has("spawnTier") ? playerObj.get("spawnTier").getAsInt() : 1;
+                            deathCount = playerObj.has("deathCount") ? playerObj.get("deathCount").getAsInt() : 0;
+                        } else {
+                            playerName = playerElement.getAsString();
+                        }
+
                         Player player = Bukkit.getPlayer(playerName);
                         if (player != null) {
                             teamManager.addPlayerToTeam(player, streamerName);
+                            teamManager.setSpawnTier(player, spawnTier);
+                            // 사망 횟수 복원 (deathCount만큼 증가)
+                            for (int k = 0; k < deathCount; k++) {
+                                teamManager.incrementDeathCount(player);
+                            }
                         } else {
                             // 플레이어가 오프라인이면 메모리에 저장 (나중에 입장할 때 자동 추가)
                             playerTeamMap.put(playerName, streamerName);

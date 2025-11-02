@@ -38,6 +38,10 @@ public class HardcoreDeathListener implements Listener {
 
         // 첫 번째 사망: 팀 변경 기회 부여
         if (deathCount == 1) {
+            // 소환된 시청자 정보 제거 (다른 팀에서 중복 소환 방지)
+            String streamerName = team.getStreamer();
+            teamManager.removeSummonedViewer(streamerName, deadPlayer.getName());
+
             // 팀에서 제거 (팀 변경 가능하도록)
             teamManager.removePlayer(deadPlayer);
 
