@@ -6,6 +6,7 @@ import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.manager.ViewerSummonManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
+import io.papermc.paper.advancement.AdvancementDisplay;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.advancement.Advancement;
@@ -73,9 +74,18 @@ public class AdvancementListener implements Listener {
         // 발전과제 완료 표시
         advancementManager.markCompleted(advancementName);
 
-        // 발전과제 이름으로 특수 발전과제 판정 (보라색 발전과제들)
-        // 특수 발전과제: 도전 과제 (end, nether, adventure의 특정 항목들)
-        int summonCount = advancementManager.getAdvancementType(advancementName);
+        // Display 정보로 보라색(특수) 발전과제 판정
+        int summonCount = 1; // 기본값: 일반(노란색) = 1명
+        AdvancementDisplay display = advancement.getDisplay();
+
+        // 보라색 발전과제는 "challenge" 타입
+        if (display != null) {
+            String displayInfo = display.toString();
+            // 보라색 발전과제 판정 (challenge frame)
+            if (displayInfo.contains("CHALLENGE") || displayInfo.contains("Challenge")) {
+                summonCount = 3; // 특수(보라색) = 3명
+            }
+        }
 
         // 시청자 소환
         int summoned = viewerSummonManager.summonViewers(player.getName(), summonCount);
