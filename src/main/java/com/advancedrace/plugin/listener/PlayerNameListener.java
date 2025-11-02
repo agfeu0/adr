@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.listener;
 
+import com.advancedrace.plugin.AdvancedRace;
 import com.advancedrace.plugin.manager.DataPersistence;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
@@ -41,6 +42,20 @@ public class PlayerNameListener implements Listener {
         updatePlayerDisplay(player, teamManager);
         // 스코어보드 설정
         ScoreboardManager.setupScoreboard(player, teamManager);
+
+        // 저장된 발전과제 점수 복원 (1틱 지연)
+        Bukkit.getScheduler().scheduleSyncDelayedTask(
+                AdvancedRace.getInstance(),
+                () -> {
+                    TeamManager.Team team = teamManager.getTeam(player);
+                    if (team != null) {
+                        // 저장된 점수 조회
+                        int savedScore = DataPersistence.loadTeamScores().getOrDefault(team.getStreamer(), 0);
+                        ScoreboardManager.updateScore(player, savedScore);
+                    }
+                },
+                1
+        );
     }
 
     public static void updatePlayerDisplay(Player player, TeamManager teamManager) {
