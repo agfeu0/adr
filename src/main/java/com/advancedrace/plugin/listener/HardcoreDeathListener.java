@@ -43,32 +43,44 @@ public class HardcoreDeathListener implements Listener {
             deadPlayer.getWorld().dropItem(deadPlayer.getLocation(), new ItemStack(Material.NETHER_STAR));
         }
 
-        // 사망 처리: SpawnTier를 1로 설정해서 다시 소환 가능하도록
-        // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
-        teamManager.setSpawnTier(deadPlayer, 1);
-
-        // 첫 번째 사망: 팀 변경 기회 추가 제공 (선택사항)
+        // 첫 번째 사망: 팀 변경 기회 부여
         if (deathCount == 1) {
             // 소환된 시청자 정보 제거 (다른 팀에서 중복 소환 방지)
             String streamerName = team.getStreamer();
             teamManager.removeSummonedViewer(streamerName, deadPlayer.getName());
 
-            // 팀 변경 기회 부여 (선택사항)
+            // 팀에서 제거 (팀 변경 가능하도록)
+            teamManager.removePlayer(deadPlayer);
+
+            // 팀 변경 기회 부여
             teamManager.grantDeathChance(deadPlayer);
 
             // 메시지
-            deadPlayer.sendMessage(ChatColor.YELLOW + "팀장이 다시 소환할 때까지 대기합니다.");
-            deadPlayer.sendMessage(ChatColor.GOLD + "선택: /팀선택 명령어로 다른 팀에 참가할 수 있습니다.");
-        }
+            deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다. /팀선택 명령어로 다른 팀에 참가할 수 있습니다.");
 
-        // 1초 후 스펙테이터 모드로 전환
-        Bukkit.getScheduler().scheduleSyncDelayedTask(
-                Bukkit.getPluginManager().getPlugin("AdvancedRace"),
-                () -> {
-                    deadPlayer.setGameMode(GameMode.SPECTATOR);
-                },
-                20 // 1초 = 20틱
-        );
+            // 1초 후 스펙테이터 모드로 전환 및 스펙테이터 등록
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                    () -> {
+                        deadPlayer.setGameMode(GameMode.SPECTATOR);
+                        teamManager.markAsSpectator(deadPlayer);
+                    },
+                    20 // 1초 = 20틱
+            );
+        } else {
+            // 두 번째 이상 사망: 팀에 남아있지만 대기 중 상태로
+            // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
+            teamManager.setSpawnTier(deadPlayer, 1);
+
+            // 1초 후 스펙테이터 모드로 전환
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                    () -> {
+                        deadPlayer.setGameMode(GameMode.SPECTATOR);
+                    },
+                    20 // 1초 = 20틱
+            );
+        }
     }
 
     private boolean isStreamer(Player player) {

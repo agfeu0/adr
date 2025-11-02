@@ -50,8 +50,10 @@ public class ViewerSummonManager {
             if (streamerName.equals(teamManager.getTeam(player) != null ? teamManager.getTeam(player).getStreamer() : null)) {
                 // 아직 스폰되지 않은 플레이어만 (스폰 순위가 설정되지 않은 플레이어)
                 // 그리고 이미 소환되지 않은 플레이어만
+                // 그리고 팀 변경 기회가 없는 플레이어만 (재선택 기회가 있는 사람은 제외)
                 if (teamManager.getSpawnTier(player) == 1 &&
-                    !teamManager.getSummonedViewersSet(streamerName).contains(player.getName())) {
+                    !teamManager.getSummonedViewersSet(streamerName).contains(player.getName()) &&
+                    !teamManager.hasDeathChance(player)) {
                     waitingPlayers.add(player);
                 }
             }
