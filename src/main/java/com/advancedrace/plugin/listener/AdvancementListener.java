@@ -73,7 +73,8 @@ public class AdvancementListener implements Listener {
         // 발전과제 완료 표시
         advancementManager.markCompleted(advancementName);
 
-        // 발전과제 유형에 따라 소환 인원 결정
+        // 발전과제 이름으로 특수 발전과제 판정 (보라색 발전과제들)
+        // 특수 발전과제: 도전 과제 (end, nether, adventure의 특정 항목들)
         int summonCount = advancementManager.getAdvancementType(advancementName);
 
         // 시청자 소환
