@@ -105,24 +105,19 @@ public class PlayerNameListener implements Listener {
                 scoreboardTeam.addEntry(player.getName());
             }
 
+            // 네임태그: 스트리머/시청자 모두 닉네임만 (팀 색깔만 적용)
+            Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
+            player.customName(displayName);
+            player.setCustomNameVisible(true);
+
+            // 탭리스트: 스트리머는 닉네임만, 시청자는 [팀이름팀] 접두사
             if (isStreamer) {
-                // 스트리머: 닉네임만 (팀 색깔 적용)
                 Component listName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
                 player.playerListName(listName);
-
-                Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
-                player.customName(displayName);
-                player.setCustomNameVisible(true);
             } else {
-                // 시청자: [팀이름] 접두사 + 닉네임 (모두 팀 색깔)
                 Component listName = Component.text("[" + team.getStreamer() + "팀] ", TextColor.color(getColorValue(team.getColor())))
                         .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
                 player.playerListName(listName);
-
-                Component displayName = Component.text("[" + team.getStreamer() + "팀] ", TextColor.color(getColorValue(team.getColor())))
-                        .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
-                player.customName(displayName);
-                player.setCustomNameVisible(true);
             }
         } else {
             // 팀이 없으면 기본값으로
