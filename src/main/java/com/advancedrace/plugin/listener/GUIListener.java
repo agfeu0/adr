@@ -66,6 +66,23 @@ public class GUIListener implements Listener {
             // 스코어보드 설정
             ScoreboardManager.setupScoreboard(player, teamManager);
 
+            // 스트리머와 팀 플레이어의 시청자 수 업데이트
+            TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+            if (team != null) {
+                int viewerCount = team.getPlayerCount();
+                // 스트리머에게 시청자 수 전송
+                Player streamer = Bukkit.getPlayer(streamerName);
+                if (streamer != null && streamer.isOnline()) {
+                    ScoreboardManager.updateViewerCount(streamer, viewerCount);
+                }
+                // 팀의 모든 시청자에게 시청자 수 업데이트
+                for (Player teamPlayer : team.getPlayers()) {
+                    if (teamPlayer.isOnline() && !teamPlayer.getName().equals(streamerName)) {
+                        ScoreboardManager.updateViewerCount(teamPlayer, viewerCount);
+                    }
+                }
+            }
+
             player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 팀에 합류했습니다!");
             player.sendMessage(ChatColor.YELLOW + "팀장이 발전과제를 달성하면 게임에 소환됩니다!");
 
