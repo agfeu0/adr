@@ -1,7 +1,6 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.TeamManager;
-import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,14 +42,7 @@ public class CompassInteractListener implements Listener {
             return;
         }
 
-        // 이벤트 먼저 취소
+        // 이벤트 취소 (손 애니메이션 방지)
         event.setCancelled(true);
-
-        // 나침반 새로고침
-        String streamerName = team.getStreamer();
-        ViewerInitializer.updateCompass(player, streamerName);
-
-        // 인벤토리 업데이트 동기화
-        player.getInventory().setHeldItemSlot(4);
     }
 }

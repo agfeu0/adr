@@ -36,10 +36,7 @@ public class ViewerInitializer {
         // 3. 크기 0.7로 축소
         setScaleSmall(player);
 
-        // 4. 5번 슬롯에 나침반 고정
-        setCompassSlot5(player);
-
-        // 5. 스폰 순위에 따른 지연 (후순위인 경우 5초 지연)
+        // 4. 스폰 순위에 따른 지연 (후순위인 경우 5초 지연)
         if (teamManager != null && teamManager.getSpawnTier(player) == 2) {
             applySpawnDelay(player, teamManager);
         }

@@ -58,9 +58,6 @@ public class DistanceLimitTask extends BukkitRunnable {
                 // 25칸 이내면 어둠 효과 제거
                 player.removePotionEffect(PotionEffectType.DARKNESS);
             }
-
-            // 나침반 업데이트 (스트리머 위치 추적)
-            ViewerInitializer.updateCompass(player, streamerName);
         }
     }
 
