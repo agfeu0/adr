@@ -70,6 +70,9 @@ public class GameStartCommand implements CommandExecutor {
         // 팀 변경 기회 초기화
         teamManager.clearAllDeathChances();
 
+        // 즉시 리스폰 활성화
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule doImmediateRespawn true");
+
         // 모든 플레이어의 발전과제 초기화
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke @a everything");
 
