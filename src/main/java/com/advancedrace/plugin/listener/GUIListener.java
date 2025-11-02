@@ -3,6 +3,7 @@ package com.advancedrace.plugin.listener;
 import com.advancedrace.plugin.gui.TeamSelectInventoryHolder;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -63,6 +64,10 @@ public class GUIListener implements Listener {
 
             player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 팀에 합류했습니다!");
             player.sendMessage(ChatColor.YELLOW + "팀장이 발전과제를 달성하면 게임에 소환됩니다!");
+
+            // 팀 합류 브로드캐스트 메시지
+            Bukkit.broadcastMessage(ChatColor.AQUA + "✓ " + player.getName() + "이(가) " + streamerName + " 팀에 합류했습니다!");
+
             player.closeInventory();
         } else {
             player.sendMessage(ChatColor.RED + "팀 합류에 실패했습니다.");

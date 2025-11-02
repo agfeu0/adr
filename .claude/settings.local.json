@@ -9,7 +9,11 @@
       "Bash(git rm:*)",
       "Bash(nul)",
       "WebFetch(domain:hub.spigotmc.org)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(if [ -f target/AdvancedRace-1.0.jar ])",
+      "Bash(then echo \"✓ Build successful\")",
+      "Bash(else echo \"✗ Build failed\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []
