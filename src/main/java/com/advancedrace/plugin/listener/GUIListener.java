@@ -56,9 +56,14 @@ public class GUIListener implements Listener {
             // SpawnTier를 1로 설정 (대기 중 상태)
             teamManager.setSpawnTier(player, 1);
 
-            // 팀 변경 기회 사용 (팀 변경 완료)
-            teamManager.useDeathChance(player);
+            // 스펙테이터 상태 제거 (팀 변경 후 복귀한 경우)
             teamManager.removeFromSpectator(player);
+
+            // 팀 변경 기회 사용 (스펙테이터 상태에서 팀을 변경한 경우만)
+            // 처음 팀을 선택하는 경우는 기회를 사용하지 않음
+            if (teamManager.isSpectatorWithChance(player)) {
+                teamManager.useDeathChance(player);
+            }
 
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그) - 1틱 지연
             Bukkit.getScheduler().scheduleSyncDelayedTask(
