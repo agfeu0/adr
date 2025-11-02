@@ -159,7 +159,14 @@ public class DataPersistence {
                         JsonArray summonedArray = teamObj.getAsJsonArray("summoned");
                         Set<String> summonedViewers = new HashSet<>();
                         for (int j = 0; j < summonedArray.size(); j++) {
-                            summonedViewers.add(summonedArray.get(j).getAsString());
+                            String summonedPlayerName = summonedArray.get(j).getAsString();
+                            summonedViewers.add(summonedPlayerName);
+
+                            // 온라인 플레이어면 SpawnTier를 2로 설정 (이미 소환된 상태)
+                            Player summonedPlayer = Bukkit.getPlayer(summonedPlayerName);
+                            if (summonedPlayer != null) {
+                                teamManager.setSpawnTier(summonedPlayer, 2);
+                            }
                         }
                         teamManager.setSummonedViewers(streamerName, summonedViewers);
                     }
@@ -257,6 +264,54 @@ public class DataPersistence {
      */
     public static void clearPlayerTeamMap() {
         playerTeamMap.clear();
+    }
+
+    /**
+     * 저장된 플레이어의 SpawnTier 조회
+     */
+    public static int getPlayerSpawnTier(String playerName) {
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+            if (!saveFile.exists()) {
+                return 1; // 기본값
+            }
+
+            try (FileReader reader = new FileReader(saveFile)) {
+                JsonObject root = gson.fromJson(reader, JsonObject.class);
+                if (root == null || !root.has("teams")) {
+                    return 1;
+                }
+
+                JsonArray teamsArray = root.getAsJsonArray("teams");
+                for (int i = 0; i < teamsArray.size(); i++) {
+                    JsonObject teamObj = teamsArray.get(i).getAsJsonObject();
+                    JsonArray playersArray = teamObj.getAsJsonArray("players");
+
+                    for (int j = 0; j < playersArray.size(); j++) {
+                        JsonElement playerElement = playersArray.get(j);
+                        String currentPlayerName = null;
+                        int spawnTier = 1;
+
+                        // 호환성: 문자열 형식(기존)과 객체 형식(새로운) 모두 지원
+                        if (playerElement.isJsonObject()) {
+                            JsonObject playerObj = playerElement.getAsJsonObject();
+                            currentPlayerName = playerObj.get("name").getAsString();
+                            spawnTier = playerObj.has("spawnTier") ? playerObj.get("spawnTier").getAsInt() : 1;
+                        } else if (playerElement.isJsonPrimitive()) {
+                            currentPlayerName = playerElement.getAsString();
+                        }
+
+                        if (currentPlayerName != null && currentPlayerName.equals(playerName)) {
+                            return spawnTier;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 플레이어 SpawnTier 조회 실패: " + e.getMessage());
+        }
+
+        return 1; // 기본값
     }
 
     /**

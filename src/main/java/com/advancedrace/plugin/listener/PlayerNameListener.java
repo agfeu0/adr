@@ -35,8 +35,9 @@ public class PlayerNameListener implements Listener {
             if (team != null) {
                 // 팀에 추가
                 teamManager.addPlayerToTeam(player, streamerName);
-                // SpawnTier를 1로 설정 (대기 중 상태)
-                teamManager.setSpawnTier(player, 1);
+                // 저장된 SpawnTier 복원 (소환 상태 유지)
+                int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
+                teamManager.setSpawnTier(player, savedSpawnTier);
             }
         }
 
