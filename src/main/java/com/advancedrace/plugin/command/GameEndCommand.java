@@ -131,6 +131,9 @@ public class GameEndCommand implements CommandExecutor {
             advancedRace.getAdvancementManager().resetAdvancements();
         }
 
+        // playerTeamMap 메모리 정리
+        DataPersistence.clearPlayerTeamMap();
+
         player.sendMessage(ChatColor.GREEN + "✓ 게임이 종료되었습니다!");
         player.sendMessage(ChatColor.YELLOW + "모든 플레이어의 설정이 초기화되었습니다.");
 

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -74,6 +75,19 @@ public class PlayerNameListener implements Listener {
                 },
                 1
         );
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
+        // Scoreboard 팀에서 플레이어 제거
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        for (Team scoreboardTeam : scoreboard.getTeams()) {
+            if (scoreboardTeam.hasEntry(player.getName())) {
+                scoreboardTeam.removeEntry(player.getName());
+            }
+        }
     }
 
     public static void updatePlayerDisplay(Player player, TeamManager teamManager) {

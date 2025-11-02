@@ -127,9 +127,14 @@ public class ViewerInitializer {
             return;
         }
 
-        // 5초 후 해제 (메시지 없음)
+        // 스폰 지연 알림 메시지
+        player.sendMessage("§e⏳ 5초 지연 후 게임 시작!");
+
+        // 5초 후 해제
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            // 5초 경과 후 특별한 처리 없음
+            if (player.isOnline()) {
+                player.sendMessage("§a✓ 게임 시작! 준비하세요!");
+            }
         }, 100); // 100틱 = 5초
     }
 

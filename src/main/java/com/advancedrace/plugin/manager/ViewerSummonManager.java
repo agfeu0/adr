@@ -49,7 +49,8 @@ public class ViewerSummonManager {
             // 이 팀에 속한 플레이어 확인
             if (streamerName.equals(teamManager.getTeam(player) != null ? teamManager.getTeam(player).getStreamer() : null)) {
                 // 아직 스폰되지 않은 플레이어만 (스폰 순위가 설정되지 않은 플레이어)
-                if (teamManager.getSpawnTier(player) == 1) {
+                // 그리고 이미 소환되지 않은 플레이어만
+                if (teamManager.getSpawnTier(player) == 1 && !teamManager.getSummonedViewersSet(streamerName).contains(player.getName())) {
                     waitingPlayers.add(player);
                 }
             }

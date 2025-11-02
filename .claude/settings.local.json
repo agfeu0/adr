@@ -18,7 +18,10 @@
       "Bash(git reset:*)",
       "Bash(git checkout:*)",
       "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.jar\" ])",
-      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.0.jar\" ])"
+      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.0.jar\" ])",
+      "Bash(then echo \"✓ Build successful - JAR created\")",
+      "Bash(ls -la \"C:\\Users\\DD\\pl\\adr\\target\"\" 2>&1 | grep -E \".jar$)",
+      "Bash(total \")"
     ],
     "deny": [],
     "ask": []

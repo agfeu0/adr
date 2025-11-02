@@ -235,7 +235,7 @@ public class DataPersistence {
     }
 
     /**
-     * 저장된 게임 데이터 삭제
+     * 저장된 게임 데이터 삭제 및 메모리 정리
      */
     public static void deleteGameData() {
         try {
@@ -247,6 +247,16 @@ public class DataPersistence {
         } catch (Exception e) {
             Bukkit.getLogger().warning("[AdvancedRace] 게임 데이터 삭제 실패: " + e.getMessage());
         }
+
+        // playerTeamMap 메모리 누수 정리
+        clearPlayerTeamMap();
+    }
+
+    /**
+     * playerTeamMap 메모리 초기화 (게임 종료 시 호출)
+     */
+    public static void clearPlayerTeamMap() {
+        playerTeamMap.clear();
     }
 
     /**
