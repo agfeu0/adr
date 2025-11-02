@@ -17,7 +17,8 @@
       "Bash(if [ -f target/AdvancedRace-1.0.0.jar ])",
       "Bash(git reset:*)",
       "Bash(git checkout:*)",
-      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.jar\" ])"
+      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.jar\" ])",
+      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.0.jar\" ])"
     ],
     "deny": [],
     "ask": []

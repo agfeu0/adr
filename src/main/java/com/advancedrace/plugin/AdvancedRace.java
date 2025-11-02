@@ -6,6 +6,7 @@ import com.advancedrace.plugin.command.StreamerCommand;
 import com.advancedrace.plugin.command.TeamSelectCommand;
 import com.advancedrace.plugin.listener.AdvancementListener;
 import com.advancedrace.plugin.listener.BeaconListener;
+import com.advancedrace.plugin.listener.BlockPlaceListener;
 import com.advancedrace.plugin.listener.CompassInteractListener;
 import com.advancedrace.plugin.listener.GUIListener;
 import com.advancedrace.plugin.listener.HardcoreDeathListener;
@@ -126,6 +127,7 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HardcoreDeathListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PvPListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new StreamerDeathListener(teamManager), this);
+        getServer().getPluginManager().registerEvents(new BlockPlaceListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new CompassInteractListener(teamManager), this);
         getServer().getPluginManager().registerEvents(advancementListener, this);
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
