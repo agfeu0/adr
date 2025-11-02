@@ -105,10 +105,11 @@ public class PlayerNameListener implements Listener {
                 scoreboardTeam.addEntry(player.getName());
             }
 
-            // 네임태그: 스트리머/시청자 모두 닉네임만 (팀 색깔만 적용)
-            Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
-            player.customName(displayName);
-            player.setCustomNameVisible(true);
+            // 네임태그: Scoreboard 팀 색깔 사용 (더 우선순위 높음)
+            // customName 대신 Scoreboard 팀의 색깔을 사용
+            // (Scoreboard 팀 색깔이 네임태그에 더 잘 반영됨)
+            player.customName(null);
+            player.setCustomNameVisible(false);
 
             // 탭리스트: 스트리머는 닉네임만, 시청자는 [팀이름팀] 접두사
             if (isStreamer) {
