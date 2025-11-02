@@ -81,46 +81,41 @@ public class ViewerInitializer {
     }
 
     /**
-     * 5번 슬롯에 나침반 설정 (임시 - 팀 참여 후 updateCompass로 업데이트됨)
+     * 5번 슬롯에 기본 나침반 설정
      */
     public static void setCompassSlot5(Player player) {
+        ItemStack emptyCompass = new ItemStack(Material.COMPASS);
+        player.getInventory().setItem(4, emptyCompass); // 슬롯 5 = 인덱스 4
+    }
+
+    /**
+     * 팀장을 가리키는 나침반 생성
+     */
+    private static ItemStack createStreamerCompass(String streamerName) {
+        Player streamer = Bukkit.getPlayer(streamerName);
+        if (streamer == null) {
+            return new ItemStack(Material.COMPASS);
+        }
+
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName("§b팀장 위치");
-            // 모든 인챈트 제거
-            meta.removeEnchantments();
-            // 인챈트 표시 숨김 플래그 추가
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            compass.setItemMeta(meta);
+        if (meta == null) {
+            return compass;
         }
-        player.getInventory().setItem(4, compass); // 슬롯 5 = 인덱스 4
+
+        meta.setDisplayName("§b" + streamerName + " 팀장");
+        meta.setLodestone(streamer.getLocation());
+        meta.setLodestoneTracked(true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        compass.setItemMeta(meta);
+        return compass;
     }
 
     /**
      * 플레이어의 현재 팀의 스트리머를 가리키도록 나침반 업데이트
      */
     public static void updateCompass(Player player, String streamerName) {
-        Player streamer = Bukkit.getPlayer(streamerName);
-        if (streamer == null) {
-            return;
-        }
-
-        // 나침반을 완전히 다시 생성
-        ItemStack compass = new ItemStack(Material.COMPASS);
-        CompassMeta meta = (CompassMeta) compass.getItemMeta();
-        if (meta == null) {
-            return;
-        }
-
-        meta.setDisplayName("§b" + streamerName + " 팀장");
-        meta.setLodestone(streamer.getLocation());
-        meta.setLodestoneTracked(true);
-        // 모든 인챈트 제거
-        meta.removeEnchantments();
-        // 인챈트 표시 숨김 플래그 추가
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        compass.setItemMeta(meta);
+        ItemStack compass = createStreamerCompass(streamerName);
         player.getInventory().setItem(4, compass);
     }
 
