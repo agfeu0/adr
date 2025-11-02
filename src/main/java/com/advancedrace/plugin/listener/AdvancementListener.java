@@ -70,7 +70,7 @@ public class AdvancementListener implements Listener {
             return;
         }
 
-        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면, kill 관련이 아닌 발전과제만 제외
+        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면, PvP 관련 발전과제 제외
         long currentTime = System.currentTimeMillis();
         boolean hasRecentPvPKill = false;
         for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
@@ -84,10 +84,15 @@ public class AdvancementListener implements Listener {
             }
         }
 
-        // PvP 킬 직후 5초 내에는 kill 관련 발전과제는 skip하고 다른 발전과제는 처리
-        if (hasRecentPvPKill && advancementName.contains("adventure")) {
-            // adventure 카테고리의 발전과제는 제외 (주로 kill 관련)
-            return;
+        // PvP 킬 직후 5초 내에는 PvP/전투 관련 발전과제는 skip
+        if (hasRecentPvPKill) {
+            // PvP 킬과 관련된 발전과제 필터링
+            if (advancementName.contains("take_aim") ||           // 정조준 (화살)
+                advancementName.contains("throw_trident") ||      // 부러진 화살/정조준 삼지창
+                advancementName.contains("shoot_at_target") ||    // 준비하시고... 쏘세요!
+                advancementName.contains("adventure")) {           // adventure 카테고리 전체
+                return;
+            }
         }
 
         // Display 정보로 일반/특수 구분
