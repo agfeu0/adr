@@ -56,6 +56,10 @@ public class GUIListener implements Listener {
             // SpawnTier를 1로 설정 (대기 중 상태)
             teamManager.setSpawnTier(player, 1);
 
+            // 팀 변경 기회 사용 (팀 변경 완료)
+            teamManager.useDeathChance(player);
+            teamManager.removeFromSpectator(player);
+
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그) - 1틱 지연
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
