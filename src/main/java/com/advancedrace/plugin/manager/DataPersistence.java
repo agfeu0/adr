@@ -229,10 +229,41 @@ public class DataPersistence {
      * 저장된 팀 정보에서 플레이어의 스트리머 이름 조회
      */
     public static String getStreamerForPlayer(String playerName) {
+        // playerTeamMap에서 먼저 확인
         String streamerName = playerTeamMap.get(playerName);
         if (streamerName != null) {
-            playerTeamMap.remove(playerName); // 사용한 후 제거
+            return streamerName; // 제거하지 말고 유지
         }
-        return streamerName;
+
+        // playerTeamMap에 없으면 game_data.json에서 직접 조회
+        try {
+            File saveFile = new File(DATA_FOLDER, SAVE_FILE);
+            if (!saveFile.exists()) {
+                return null;
+            }
+
+            try (FileReader reader = new FileReader(saveFile)) {
+                JsonObject root = gson.fromJson(reader, JsonObject.class);
+                if (root == null || !root.has("teams")) {
+                    return null;
+                }
+
+                JsonArray teamsArray = root.getAsJsonArray("teams");
+                for (int i = 0; i < teamsArray.size(); i++) {
+                    JsonObject teamObj = teamsArray.get(i).getAsJsonObject();
+                    JsonArray playersArray = teamObj.getAsJsonArray("players");
+
+                    for (int j = 0; j < playersArray.size(); j++) {
+                        if (playersArray.get(j).getAsString().equals(playerName)) {
+                            return teamObj.get("streamer").getAsString();
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[AdvancedRace] 플레이어 팀 정보 조회 실패: " + e.getMessage());
+        }
+
+        return null;
     }
 }
