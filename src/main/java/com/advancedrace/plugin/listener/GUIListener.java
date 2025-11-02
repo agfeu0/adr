@@ -83,18 +83,14 @@ public class GUIListener implements Listener {
                     1
             );
 
-            // 스코어보드 설정 (3틱 지연 - 디스플레이 업데이트 후)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(
-                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
-                    () -> {
-                        ScoreboardManager.setupScoreboard(player, teamManager);
-                        // 스트리머의 스코어보드도 함께 갱신
-                        if (streamer != null && streamer.isOnline()) {
-                            ScoreboardManager.setupScoreboard(streamer, teamManager);
-                        }
-                    },
-                    3
-            );
+            // 스트리머의 스코어보드만 갱신 (시청자는 소환될 때만 스코어보드 표시)
+            if (streamer != null && streamer.isOnline()) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(
+                        Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                        () -> ScoreboardManager.setupScoreboard(streamer, teamManager),
+                        3
+                );
+            }
 
             // 스트리머와 팀 플레이어의 시청자 수 업데이트
             TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);

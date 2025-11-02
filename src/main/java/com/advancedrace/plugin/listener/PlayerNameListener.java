@@ -42,8 +42,13 @@ public class PlayerNameListener implements Listener {
         }
 
         updatePlayerDisplay(player, teamManager);
-        // 스코어보드 설정
-        ScoreboardManager.setupScoreboard(player, teamManager);
+
+        // 스코어보드 설정 (스트리머 또는 소환된 시청자만)
+        String playerStreamer = DataPersistence.getStreamerForPlayer(player.getName());
+        if (playerStreamer == null || teamManager.getSpawnTier(player) == 2) {
+            // playerStreamer == null = 스트리머 / getSpawnTier(player) == 2 = 소환된 시청자
+            ScoreboardManager.setupScoreboard(player, teamManager);
+        }
 
         // 팀에 속한 모든 플레이어의 시청자 수 업데이트 (게임 시작 전에만 - 1틱 지연 - 스코어보드 설정 완료 대기)
         Bukkit.getScheduler().scheduleSyncDelayedTask(
