@@ -6,6 +6,7 @@ import com.advancedrace.plugin.command.StreamerCommand;
 import com.advancedrace.plugin.command.TeamSelectCommand;
 import com.advancedrace.plugin.listener.AdvancementListener;
 import com.advancedrace.plugin.listener.BeaconListener;
+import com.advancedrace.plugin.listener.CompassInteractListener;
 import com.advancedrace.plugin.listener.GUIListener;
 import com.advancedrace.plugin.listener.HardcoreDeathListener;
 import com.advancedrace.plugin.listener.InventorySizeListener;
@@ -99,13 +100,14 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HardcoreDeathListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PvPListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new StreamerDeathListener(teamManager), this);
+        getServer().getPluginManager().registerEvents(new CompassInteractListener(teamManager), this);
         advancementListener = new AdvancementListener(teamManager, advancementManager, viewerSummonManager);
         getServer().getPluginManager().registerEvents(advancementListener, this);
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(teamManager), this);
 
-        // Task 등록 (거리 제한 체크: 1초마다)
-        new DistanceLimitTask(teamManager).runTaskTimer(this, 0, 20);
+        // Task 등록 (거리 제한 체크: 3초마다)
+        new DistanceLimitTask(teamManager).runTaskTimer(this, 0, 60);
 
         getLogger().info("AdvancedRace 플러그인 활성화됨!");
     }

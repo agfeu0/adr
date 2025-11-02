@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -115,6 +116,8 @@ public class ViewerInitializer {
         meta.setLodestoneTracked(true);
         // 모든 인챈트 제거
         meta.removeEnchantments();
+        // 인챈트 표시 숨김 플래그 추가
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         compass.setItemMeta(meta);
         player.getInventory().setItem(4, compass);
     }
