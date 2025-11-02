@@ -78,28 +78,38 @@ public class PlayerNameListener implements Listener {
         }
 
         if (team != null) {
-            // Scoreboard 팀 설정으로 네임태그 색상 적용
+            // 스트리머는 Component 색깔을 사용하므로 Scoreboard 팀에서 제거
+            // 시청자는 Scoreboard 팀 설정으로 네임태그 색상 적용
             Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
             String teamName = "team_" + team.getStreamer();
             Team scoreboardTeam = scoreboard.getTeam(teamName);
 
-            // 팀이 없으면 생성
-            if (scoreboardTeam == null) {
-                scoreboardTeam = scoreboard.registerNewTeam(teamName);
-                scoreboardTeam.setColor(getChatColor(team.getColor()));
-            }
+            if (isStreamer) {
+                // 스트리머: Component 색깔 사용하므로 Scoreboard 팀에서 제거
+                if (scoreboardTeam != null && scoreboardTeam.hasEntry(player.getName())) {
+                    scoreboardTeam.removeEntry(player.getName());
+                }
+            } else {
+                // 시청자: Scoreboard 팀에 추가
+                if (scoreboardTeam == null) {
+                    scoreboardTeam = scoreboard.registerNewTeam(teamName);
+                    scoreboardTeam.setColor(getChatColor(team.getColor()));
+                }
 
-            // 플레이어를 팀에 추가
-            if (!scoreboardTeam.hasEntry(player.getName())) {
-                scoreboardTeam.addEntry(player.getName());
+                // 플레이어를 팀에 추가
+                if (!scoreboardTeam.hasEntry(player.getName())) {
+                    scoreboardTeam.addEntry(player.getName());
+                }
             }
 
             if (isStreamer) {
-                // 스트리머: 닉네임 색깔만 적용 (탭리스트에도 색깔 표시)
-                Component listName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
+                // 스트리머: [팀이름팀장] 접두사 + 닉네임 (모두 팀 색깔)
+                Component listName = Component.text("[" + team.getStreamer() + "팀장] ", TextColor.color(getColorValue(team.getColor())))
+                        .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
                 player.playerListName(listName);
 
-                Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
+                Component displayName = Component.text("[" + team.getStreamer() + "팀장] ", TextColor.color(getColorValue(team.getColor())))
+                        .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
                 player.customName(displayName);
                 player.setCustomNameVisible(true);
             } else {
