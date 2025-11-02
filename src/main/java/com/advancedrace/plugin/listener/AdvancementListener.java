@@ -65,6 +65,11 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
+        // 마인크래프트 공식 발전과제만 처리 (namespace가 "minecraft:"인 것만)
+        if (!advancement.getKey().getNamespace().equals("minecraft")) {
+            return;
+        }
+
         // combat 관련 발전과제는 무시 (의도하지 않은 소람 방지)
         if (advancementName.contains("combat") || advancementName.contains("kill")) {
             return;
