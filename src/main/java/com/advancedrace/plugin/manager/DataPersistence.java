@@ -278,7 +278,18 @@ public class DataPersistence {
                     JsonArray playersArray = teamObj.getAsJsonArray("players");
 
                     for (int j = 0; j < playersArray.size(); j++) {
-                        if (playersArray.get(j).getAsString().equals(playerName)) {
+                        JsonElement playerElement = playersArray.get(j);
+                        String currentPlayerName = null;
+
+                        // 호환성: 문자열 형식(기존)과 객체 형식(새로운) 모두 지원
+                        if (playerElement.isJsonObject()) {
+                            JsonObject playerObj = playerElement.getAsJsonObject();
+                            currentPlayerName = playerObj.get("name").getAsString();
+                        } else if (playerElement.isJsonPrimitive()) {
+                            currentPlayerName = playerElement.getAsString();
+                        }
+
+                        if (currentPlayerName != null && currentPlayerName.equals(playerName)) {
                             return teamObj.get("streamer").getAsString();
                         }
                     }
