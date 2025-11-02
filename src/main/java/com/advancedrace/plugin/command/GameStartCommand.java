@@ -143,11 +143,13 @@ public class GameStartCommand implements CommandExecutor {
                     p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                 }
 
-                // 탭 리스트 팀별 정렬
-                TablistManager.organizeTablist(teamManager);
-
                 // 나침반 추적 시작
                 advancedRace.getCompassTrackingManager().start();
+
+                // 탭 리스트 팀별 정렬 (1틱 지연 - Scoreboard 팀 생성 완료 대기)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    TablistManager.organizeTablist(teamManager);
+                }, 1);
 
                 int successCount = 0;
                 int failCount = 0;
