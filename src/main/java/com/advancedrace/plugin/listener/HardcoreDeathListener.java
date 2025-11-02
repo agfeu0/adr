@@ -4,10 +4,12 @@ import com.advancedrace.plugin.manager.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class HardcoreDeathListener implements Listener {
 
@@ -35,6 +37,11 @@ public class HardcoreDeathListener implements Listener {
         // 사망 횟수 증가
         teamManager.incrementDeathCount(deadPlayer);
         int deathCount = teamManager.getDeathCount(deadPlayer);
+
+        // 50% 확률로 네더의 별 드랍
+        if (Math.random() < 0.5) {
+            deadPlayer.getWorld().dropItem(deadPlayer.getLocation(), new ItemStack(Material.NETHER_STAR));
+        }
 
         // 사망 처리: SpawnTier를 1로 설정해서 다시 소환 가능하도록
         // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
