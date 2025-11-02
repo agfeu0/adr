@@ -65,29 +65,36 @@ public class GUIListener implements Listener {
                 teamManager.useDeathChance(player);
             }
 
+            // 스트리머의 표시도 함께 업데이트 (시청자가 참여했으므로 스트리머 정보 갱신)
+            Player streamer = Bukkit.getPlayer(streamerName);
+            if (streamer != null && streamer.isOnline()) {
+                // 2틱 지연으로 스트리머 업데이트 (플레이어가 팀에 완전히 추가되도록 대기)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(
+                        Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                        () -> PlayerNameListener.updatePlayerDisplay(streamer, teamManager),
+                        2
+                );
+            }
+
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그) - 1틱 지연
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
-                    () -> {
-                        PlayerNameListener.updatePlayerDisplay(player, teamManager);
-                        // 스트리머의 표시도 함께 업데이트
-                        Player streamer = Bukkit.getPlayer(streamerName);
-                        if (streamer != null && streamer.isOnline()) {
-                            PlayerNameListener.updatePlayerDisplay(streamer, teamManager);
-                        }
-                    },
+                    () -> PlayerNameListener.updatePlayerDisplay(player, teamManager),
                     1
             );
 
-            // 스코어보드 설정
-            ScoreboardManager.setupScoreboard(player, teamManager);
+            // 스코어보드 설정 (3틱 지연 - 디스플레이 업데이트 후)
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                    () -> ScoreboardManager.setupScoreboard(player, teamManager),
+                    3
+            );
 
             // 스트리머와 팀 플레이어의 시청자 수 업데이트
             TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
             if (team != null) {
                 int viewerCount = team.getPlayerCount();
-                // 스트리머에게 시청자 수 전송
-                Player streamer = Bukkit.getPlayer(streamerName);
+                // 스트리머에게 시청자 수 전송 (위에서 이미 정의된 streamer 사용)
                 if (streamer != null && streamer.isOnline()) {
                     ScoreboardManager.updateViewerCount(streamer, viewerCount);
                 }
