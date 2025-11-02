@@ -22,11 +22,11 @@ public class AdvancementManager {
     }
 
     /**
-     * @deprecated 더 이상 사용되지 않음. AdvancementListener에서 모든 발전과제를 1명 소환으로 처리
+     * @deprecated 더 이상 사용되지 않음. AdvancementListener에서 Display 정보로 일반/특수 판정
      */
     @Deprecated
     public int getAdvancementType(String advancementName) {
-        return 1;
+        return 1; // 기본값
     }
 
     /**
