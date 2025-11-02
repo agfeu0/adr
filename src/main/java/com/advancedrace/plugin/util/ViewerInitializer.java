@@ -119,7 +119,7 @@ public class ViewerInitializer {
     }
 
     /**
-     * 플레이어에게 스폰 지연 적용 (5초)
+     * 플레이어에게 스폰 지연 적용 (1초)
      */
     private static void applySpawnDelay(Player player, TeamManager teamManager) {
         Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRace");
@@ -127,10 +127,10 @@ public class ViewerInitializer {
             return;
         }
 
-        // 5초 후 해제 (메시지 없음)
+        // 1초 후 해제 (메시지 없음)
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            // 5초 경과 후 특별한 처리 없음
-        }, 100); // 100틱 = 5초
+            // 1초 경과 후 특별한 처리 없음
+        }, 20); // 20틱 = 1초
     }
 
     /**
