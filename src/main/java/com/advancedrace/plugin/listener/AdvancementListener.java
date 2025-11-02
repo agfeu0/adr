@@ -65,21 +65,28 @@ public class AdvancementListener implements Listener {
 
         String advancementName = advancement.getKey().toString();
 
-        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면 발전과제 점수 제외
+        // combat 관련 발전과제는 무시 (의도하지 않은 소환 방지)
+        if (advancementName.contains("combat") || advancementName.contains("kill")) {
+            return;
+        }
+
+        // 최근 5초 내에 플레이어에 의해 죽은 플레이어가 있으면, kill 관련이 아닌 발전과제만 제외
         long currentTime = System.currentTimeMillis();
+        boolean hasRecentPvPKill = false;
         for (String deadPlayerName : new java.util.ArrayList<>(playerKilledByPlayerTimes.keySet())) {
             long deathTime = playerKilledByPlayerTimes.get(deadPlayerName);
             if (currentTime - deathTime < 5000) { // 5초 이내
-                // 플레이어가 다른 플레이어에 의해 죽었으므로 점수 제외
-                return;
+                hasRecentPvPKill = true;
+                break;
             } else if (currentTime - deathTime >= 5000) {
                 // 오래된 기록 제거
                 playerKilledByPlayerTimes.remove(deadPlayerName);
             }
         }
 
-        // combat 관련 발전과제는 무시 (의도하지 않은 소환 방지)
-        if (advancementName.contains("combat") || advancementName.contains("kill")) {
+        // PvP 킬 직후 5초 내에는 kill 관련 발전과제는 skip하고 다른 발전과제는 처리
+        if (hasRecentPvPKill && advancementName.contains("adventure")) {
+            // adventure 카테고리의 발전과제는 제외 (주로 kill 관련)
             return;
         }
 
