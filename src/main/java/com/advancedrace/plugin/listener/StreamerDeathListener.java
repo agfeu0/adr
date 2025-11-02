@@ -42,10 +42,12 @@ public class StreamerDeathListener implements Listener {
         // 사망 캔슬
         event.setCancelled(true);
 
-        // 팀의 시청자 목록 (스트리머 제외)
+        // 팀의 소환된 시청자 목록만 (스트리머 제외, 소환된 시청자만)
         List<Player> viewers = new ArrayList<>();
         for (Player player : team.getPlayers()) {
-            if (!player.equals(deadPlayer) && !isStreamer(player)) {
+            // 소환된 시청자(SpawnTier == 2)만 희생 대상
+            if (!player.equals(deadPlayer) && !isStreamer(player) &&
+                teamManager.getSpawnTier(player) == 2) {
                 viewers.add(player);
             }
         }
