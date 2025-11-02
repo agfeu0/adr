@@ -9,15 +9,19 @@ commands:
   스트리머:
     description: 스트리머(팀장) 등록
     usage: /스트리머 <닉네임> [색깔]
+    permission: advancedrace.command.streamer
   팀선택:
     description: 팀 선택 GUI 열기
     usage: /팀선택
+    permission: advancedrace.command.teamselect
   시작:
     description: 게임 시작
     usage: /시작
+    permission: advancedrace.command.start
   종료:
     description: 게임 종료
     usage: /종료
+    permission: advancedrace.command.end
 
 permissions:
   advancedrace.command.streamer:
@@ -26,3 +30,9 @@ permissions:
   advancedrace.command.teamselect:
     description: 팀선택 명령어 사용
     default: true
+  advancedrace.command.start:
+    description: 게임 시작 명령어 사용
+    default: op
+  advancedrace.command.end:
+    description: 게임 종료 명령어 사용
+    default: op
