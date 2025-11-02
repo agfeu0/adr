@@ -50,13 +50,13 @@ public class StreamerDeathListener implements Listener {
             }
         }
 
-        // 스트리머에게 3분간 행동 불가 효과 적용 (항상)
-        applyInactionEffect(deadPlayer);
-
         if (!viewers.isEmpty()) {
             // 시청자가 있으면 무작위로 1명 선택해서 희생
             Player sacrificed = viewers.get(random.nextInt(viewers.size()));
             sacrificeViewer(sacrificed, streamerName);
+        } else {
+            // 시청자가 없으면 스트리머에게 3분간 행동 불가 효과
+            applyInactionEffect(deadPlayer);
         }
 
         // 스트리머 즉시 체력 회복 (최대 체력)
