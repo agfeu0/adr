@@ -36,8 +36,8 @@ public class ScoreboardManager {
         }
 
         String streamerName = (team != null) ? team.getStreamer() : "없음";
-        // 초기화 시: 실제 팀원 수 표시 (스트리머 제외) - 팀에 속한 모든 시청자
-        int viewerCount = (team != null) ? (team.getPlayerCount() - 1) : 0; // 스트리머 제외
+        // 초기화 시: 팀에 속한 시청자 수 (팀은 스트리머를 포함하지 않으므로 그대로)
+        int viewerCount = (team != null) ? team.getPlayerCount() : 0; // 시청자 수
         // 후에: 소환된 시청자만 표시
         int summonedCount = (team != null && staticTeamManager != null) ? staticTeamManager.getSummonedViewerCount(streamerName) : 0;
 

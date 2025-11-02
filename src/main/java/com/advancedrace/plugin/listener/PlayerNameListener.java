@@ -55,7 +55,8 @@ public class PlayerNameListener implements Listener {
                         if (playerTeamStreamer != null) {
                             TeamManager.Team playerTeam = teamManager.getTeamByStreamer(playerTeamStreamer);
                             if (playerTeam != null) {
-                                int updatedViewerCount = playerTeam.getPlayerCount() - 1; // 스트리머 제외
+                                // 팀의 플레이어 수는 이미 시청자만 포함 (스트리머는 팀에 속하지 않음)
+                                int updatedViewerCount = playerTeam.getPlayerCount(); // 스트리머 제외 불필요
                                 // 스트리머에게 시청자 수 업데이트
                                 Player streamer = Bukkit.getPlayer(playerTeamStreamer);
                                 if (streamer != null && streamer.isOnline()) {
