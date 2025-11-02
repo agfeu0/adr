@@ -48,9 +48,16 @@ public class PlayerNameListener implements Listener {
                 AdvancedRace.getInstance(),
                 () -> {
                     TeamManager.Team team = teamManager.getTeam(player);
+
+                    // 팀이 없으면 스트리머인지 확인
+                    if (team == null) {
+                        team = getStreamerTeam(player, teamManager);
+                    }
+
+                    // 팀이 있으면 점수 복원
                     if (team != null) {
-                        // 저장된 점수 조회
-                        int savedScore = DataPersistence.loadTeamScores().getOrDefault(team.getStreamer(), 0);
+                        String teamStreamerName = team.getStreamer();
+                        int savedScore = DataPersistence.loadTeamScores().getOrDefault(teamStreamerName, 0);
                         ScoreboardManager.updateScore(player, savedScore);
                     }
                 },
