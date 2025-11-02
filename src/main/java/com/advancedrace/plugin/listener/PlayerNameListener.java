@@ -120,10 +120,8 @@ public class PlayerNameListener implements Listener {
                 scoreboardTeam.addEntry(player.getName());
             }
 
-            // 네임태그: Adventure Component로 색상 적용
-            Component nametagComponent = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
-            player.customName(nametagComponent);
-            player.setCustomNameVisible(true);
+            // Scoreboard 팀의 색상 설정 (네임태그 색상)
+            scoreboardTeam.setColor(getChatColor(team.getColor()));
 
             // 탭리스트: 스트리머는 닉네임만, 시청자는 [팀이름팀] 접두사
             if (isStreamer) {
