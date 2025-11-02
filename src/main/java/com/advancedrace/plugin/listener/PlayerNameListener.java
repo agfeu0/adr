@@ -1,6 +1,7 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import com.advancedrace.plugin.util.ScoreboardManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -24,6 +25,8 @@ public class PlayerNameListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         updatePlayerDisplay(player, teamManager);
+        // 스코어보드 설정
+        ScoreboardManager.setupScoreboard(player, teamManager);
     }
 
     public static void updatePlayerDisplay(Player player, TeamManager teamManager) {
