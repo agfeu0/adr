@@ -112,16 +112,15 @@ public class PlayerNameListener implements Listener {
             // 팀이 없으면 생성
             if (scoreboardTeam == null) {
                 scoreboardTeam = scoreboard.registerNewTeam(teamName);
-                scoreboardTeam.setColor(getChatColor(team.getColor()));
             }
+
+            // 색상 설정 (팀 생성 직후 바로 설정)
+            scoreboardTeam.setColor(getChatColor(team.getColor()));
 
             // 플레이어를 팀에 추가
             if (!scoreboardTeam.hasEntry(player.getName())) {
                 scoreboardTeam.addEntry(player.getName());
             }
-
-            // Scoreboard 팀의 색상 설정 (네임태그 색상)
-            scoreboardTeam.setColor(getChatColor(team.getColor()));
 
             // 탭리스트: 스트리머는 닉네임만, 시청자는 [팀이름팀] 접두사
             if (isStreamer) {
