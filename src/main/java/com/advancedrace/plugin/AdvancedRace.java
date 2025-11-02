@@ -62,6 +62,9 @@ public class AdvancedRace extends JavaPlugin {
         // 나침반 추적 매니저 초기화
         compassTrackingManager = new CompassTrackingManager(this, teamManager);
 
+        // AdvancementListener 초기화 (점수 로드 전에 필요)
+        advancementListener = new AdvancementListener(teamManager, advancementManager, viewerSummonManager);
+
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
 
@@ -125,7 +128,6 @@ public class AdvancedRace extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PvPListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new StreamerDeathListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new CompassInteractListener(teamManager), this);
-        advancementListener = new AdvancementListener(teamManager, advancementManager, viewerSummonManager);
         getServer().getPluginManager().registerEvents(advancementListener, this);
         getServer().getPluginManager().registerEvents(new PlayerNameListener(teamManager), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(teamManager), this);
