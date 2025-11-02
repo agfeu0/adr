@@ -45,6 +45,35 @@ public class PlayerNameListener implements Listener {
         // 스코어보드 설정
         ScoreboardManager.setupScoreboard(player, teamManager);
 
+        // 팀에 속한 모든 플레이어의 시청자 수 업데이트 (게임 시작 전에만 - 1틱 지연 - 스코어보드 설정 완료 대기)
+        Bukkit.getScheduler().scheduleSyncDelayedTask(
+                AdvancedRace.getInstance(),
+                () -> {
+                    // 게임이 시작되지 않았을 때만 업데이트 (게임 중에는 ViewerSummonManager에서 관리)
+                    if (!AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+                        String playerTeamStreamer = DataPersistence.getStreamerForPlayer(player.getName());
+                        if (playerTeamStreamer != null) {
+                            TeamManager.Team playerTeam = teamManager.getTeamByStreamer(playerTeamStreamer);
+                            if (playerTeam != null) {
+                                int updatedViewerCount = playerTeam.getPlayerCount() - 1; // 스트리머 제외
+                                // 스트리머에게 시청자 수 업데이트
+                                Player streamer = Bukkit.getPlayer(playerTeamStreamer);
+                                if (streamer != null && streamer.isOnline()) {
+                                    updateViewerCountDirect(streamer, updatedViewerCount);
+                                }
+                                // 팀의 모든 시청자에게도 업데이트
+                                for (Player teamMember : playerTeam.getPlayers()) {
+                                    if (!teamMember.getName().equals(playerTeamStreamer) && teamMember.isOnline()) {
+                                        updateViewerCountDirect(teamMember, updatedViewerCount);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                1 // 1틱 지연
+        );
+
         // 저장된 발전과제 점수 복원 및 남은 시간 업데이트 (1틱 지연)
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 AdvancedRace.getInstance(),
@@ -157,6 +186,23 @@ public class PlayerNameListener implements Listener {
             }
         }
         return null;
+    }
+
+    /**
+     * 플레이어 스코어보드에 시청자 수를 직접 업데이트 (팀에 속한 모든 시청자)
+     */
+    private static void updateViewerCountDirect(Player player, int viewerCount) {
+        org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
+        org.bukkit.scoreboard.Objective objective = scoreboard.getObjective("game");
+        if (objective == null) return;
+
+        // 기존 시청자 항목 제거
+        scoreboard.getEntries().stream()
+                .filter(entry -> entry.startsWith("§e시청자:"))
+                .forEach(scoreboard::resetScores);
+
+        // 새로운 시청자 수 추가
+        objective.getScore("§e시청자: §f" + viewerCount).setScore(2);
     }
 
     private static int getColorValue(String colorCode) {

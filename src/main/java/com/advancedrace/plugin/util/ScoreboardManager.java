@@ -36,7 +36,9 @@ public class ScoreboardManager {
         }
 
         String streamerName = (team != null) ? team.getStreamer() : "없음";
+        // 초기화 시: 실제 팀원 수 표시 (스트리머 제외) - 팀에 속한 모든 시청자
         int viewerCount = (team != null) ? (team.getPlayerCount() - 1) : 0; // 스트리머 제외
+        // 후에: 소환된 시청자만 표시
         int summonedCount = (team != null && staticTeamManager != null) ? staticTeamManager.getSummonedViewerCount(streamerName) : 0;
 
         // 빈 줄 (맨 위)
@@ -55,8 +57,14 @@ public class ScoreboardManager {
         // 발전과제 점수
         objective.getScore("§e발전과제: §f0점").setScore(score--);
 
-        // 시청자 수 (소환된 시청자만)
-        objective.getScore("§e시청자: §f" + summonedCount).setScore(score--);
+        // 시청자 수 (게임 중: 소환된 시청자만 / 게임 전: 팀에 속한 모든 시청자)
+        int displayViewerCount = 0;
+        if (com.advancedrace.plugin.AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+            displayViewerCount = summonedCount; // 게임 중: 소환된 시청자
+        } else {
+            displayViewerCount = viewerCount; // 게임 전: 팀에 속한 모든 시청자
+        }
+        objective.getScore("§e시청자: §f" + displayViewerCount).setScore(score--);
 
         // 빈 줄 (맨 아래)
         objective.getScore("   ").setScore(score--);
