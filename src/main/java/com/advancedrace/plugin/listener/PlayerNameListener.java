@@ -7,12 +7,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
@@ -37,9 +35,6 @@ public class PlayerNameListener implements Listener {
                 teamManager.addPlayerToTeam(player, streamerName);
                 // SpawnTier를 1로 설정 (대기 중 상태)
                 teamManager.setSpawnTier(player, 1);
-                // 슬롯 5(인덱스 4)에 일반 나침반 지급
-                ItemStack compass = new ItemStack(Material.COMPASS);
-                player.getInventory().setItem(4, compass);
             }
         }
 

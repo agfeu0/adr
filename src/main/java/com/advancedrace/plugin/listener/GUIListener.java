@@ -4,14 +4,12 @@ import com.advancedrace.plugin.gui.TeamSelectInventoryHolder;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.util.ScoreboardManager;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 public class GUIListener implements Listener {
 
@@ -59,10 +57,6 @@ public class GUIListener implements Listener {
 
             // 플레이어 디스플레이 업데이트 (탭리스트, 네임태그)
             PlayerNameListener.updatePlayerDisplay(player, teamManager);
-
-            // 슬롯 5(인덱스 4)에 일반 나침반 지급
-            ItemStack compass = new ItemStack(Material.COMPASS);
-            player.getInventory().setItem(4, compass);
 
             // 스코어보드 설정
             ScoreboardManager.setupScoreboard(player, teamManager);

@@ -68,7 +68,6 @@ public class ViewerSummonManager {
 
             // 초기화 (TeamManager 전달해서 5초 지연 적용)
             com.advancedrace.plugin.util.ViewerInitializer.initializeViewer(viewer, teamManager);
-            com.advancedrace.plugin.util.ViewerInitializer.updateCompass(viewer, streamerName);
 
             // 기본 템 제공 (돌 곡괭이)
             giveStartingItems(viewer);
