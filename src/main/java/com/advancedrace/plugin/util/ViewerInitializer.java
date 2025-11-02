@@ -91,9 +91,6 @@ public class ViewerInitializer {
      */
     private static ItemStack createStreamerCompass(String streamerName) {
         Player streamer = Bukkit.getPlayer(streamerName);
-        if (streamer == null) {
-            return new ItemStack(Material.COMPASS);
-        }
 
         ItemStack compass = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta) compass.getItemMeta();
@@ -102,8 +99,13 @@ public class ViewerInitializer {
         }
 
         meta.setDisplayName("§b" + streamerName + " 팀장");
-        meta.setLodestone(streamer.getLocation());
-        meta.setLodestoneTracked(true);
+
+        // 팀장이 온라인이면 스폰 위치를 로드스톤으로 설정
+        if (streamer != null && streamer.isOnline()) {
+            meta.setLodestone(streamer.getLocation());
+            meta.setLodestoneTracked(false); // 블록이 없어도 방향만 가리킴
+        }
+
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         compass.setItemMeta(meta);
         return compass;
