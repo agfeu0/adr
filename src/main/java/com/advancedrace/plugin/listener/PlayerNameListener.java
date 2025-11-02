@@ -103,13 +103,11 @@ public class PlayerNameListener implements Listener {
             }
 
             if (isStreamer) {
-                // 스트리머: [팀이름팀장] 접두사 + 닉네임 (모두 팀 색깔)
-                Component listName = Component.text("[" + team.getStreamer() + "팀장] ", TextColor.color(getColorValue(team.getColor())))
-                        .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
+                // 스트리머: 닉네임만 (팀 색깔 적용)
+                Component listName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
                 player.playerListName(listName);
 
-                Component displayName = Component.text("[" + team.getStreamer() + "팀장] ", TextColor.color(getColorValue(team.getColor())))
-                        .append(Component.text(player.getName(), TextColor.color(getColorValue(team.getColor()))));
+                Component displayName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
                 player.customName(displayName);
                 player.setCustomNameVisible(true);
             } else {
