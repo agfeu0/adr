@@ -1,6 +1,8 @@
 package com.advancedrace.plugin.listener;
 
 import com.advancedrace.plugin.manager.TeamManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -125,6 +127,38 @@ public class StreamerDeathListener implements Listener {
         );
         streamerBoundaryTasks.put(streamerName, immobilizeTask);
 
+        // 액션바 타이머 시작 (1초마다 업데이트, 20틱)
+        final int[] remainingSeconds = {180}; // 3분 = 180초
+        BukkitTask actionBarTask = Bukkit.getScheduler().runTaskTimer(
+                Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                () -> {
+                    if (!streamer.isOnline() || streamer.getGameMode() != GameMode.SPECTATOR) {
+                        // 스트리머가 오프라인이거나 스펙테이터가 아니면 태스크 취소
+                        if (streamerBoundaryTasks.containsKey(streamerName + "_actionbar")) {
+                            BukkitTask task = streamerBoundaryTasks.get(streamerName + "_actionbar");
+                            task.cancel();
+                            streamerBoundaryTasks.remove(streamerName + "_actionbar");
+                        }
+                        return;
+                    }
+
+                    // 분과 초 계산
+                    int minutes = remainingSeconds[0] / 60;
+                    int seconds = remainingSeconds[0] % 60;
+                    String timeString = String.format("%d:%02d", minutes, seconds);
+
+                    // 액션바에 시간 표시
+                    Component actionBar = Component.text("행동 불가 상태 - ", NamedTextColor.RED)
+                            .append(Component.text(timeString, NamedTextColor.YELLOW));
+                    streamer.sendActionBar(actionBar);
+
+                    remainingSeconds[0]--;
+                },
+                0L, // 초기 딜레이 없음
+                20L  // 1초마다 (20틱)
+        );
+        streamerBoundaryTasks.put(streamerName + "_actionbar", actionBarTask);
+
         // 3분 후 (3600틱) 서바이벌 모드로 복구
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 Bukkit.getPluginManager().getPlugin("AdvancedRace"),
@@ -140,10 +174,16 @@ public class StreamerDeathListener implements Listener {
                         streamer.sendMessage(ChatColor.YELLOW + "10초간 저항 1 상태입니다.");
                     }
 
-                    // 경계 체크 태스크 취소
+                    // 움직임 방지 태스크 취소
                     if (streamerBoundaryTasks.containsKey(streamerName)) {
                         streamerBoundaryTasks.get(streamerName).cancel();
                         streamerBoundaryTasks.remove(streamerName);
+                    }
+
+                    // 액션바 타이머 태스크 취소
+                    if (streamerBoundaryTasks.containsKey(streamerName + "_actionbar")) {
+                        streamerBoundaryTasks.get(streamerName + "_actionbar").cancel();
+                        streamerBoundaryTasks.remove(streamerName + "_actionbar");
                     }
 
                     // 사망 위치 정보 제거
