@@ -124,6 +124,7 @@ public class AdvancementListener implements Listener {
         }
 
         // 시청자 소환 (첫 Challenge 달성자 또는 일반 발전과제만)
+        final boolean isFirstChallengeMessage = isFirstChallengeClear;
         final int summoned = (isFirstChallengeClear || !isChallenge) ?
             viewerSummonManager.summonViewers(player.getName(), summonCount) : 0;
 
@@ -153,12 +154,16 @@ public class AdvancementListener implements Listener {
         }
         DataPersistence.saveGameData(teamManager, teamScores, remainingSeconds);
 
-        // 소환 결과 메시지는 5틱 후에 전송 (시청자가 소환된 경우만)
-        if (summoned > 0) {
+        // 소환 결과 메시지는 5틱 후에 전송
+        if (summoned > 0 || isFirstChallengeMessage) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                     () -> {
-                        player.sendMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
+                        if (isFirstChallengeMessage) {
+                            player.sendMessage(ChatColor.GREEN + "→ 시청자 3명이 소환되었습니다!");
+                        } else if (summoned > 0) {
+                            player.sendMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
+                        }
                     },
                     5 // 5틱 지연
             );
