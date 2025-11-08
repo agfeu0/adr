@@ -45,9 +45,9 @@ public class PlayerNameListener implements Listener {
             }
         }
 
-        // 저장된 팀 정보 확인 및 자동 추가
+        // 저장된 팀 정보 확인 및 자동 추가 (게임 진행 중이 아닐 때만)
         String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
-        if (streamerName != null) {
+        if (streamerName != null && !AdvancedRace.getInstance().getGameStateManager().isRunning()) {
             TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
             if (team != null) {
                 // 팀에 추가
