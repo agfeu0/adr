@@ -88,10 +88,17 @@ public class ViewerSummonManager {
             com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
             com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
 
-            // 네임태그 색상 적용
-            PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
-
             viewer.sendMessage("§a✓ 게임에 소환되었습니다!");
+
+            // 네임태그 색상 적용 (스코어보드 설정 완료 후 지연으로 재적용)
+            Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRace");
+            if (plugin != null) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
+                }, 2);
+            } else {
+                PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
+            }
 
             // 팀장에게 텔레포트 및 폭죽 효과 (5초 후)
             Player streamer = Bukkit.getPlayer(streamerName);
