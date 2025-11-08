@@ -56,8 +56,8 @@ public class SafeTeleporter {
             int blockX = (int) randomX;
             int blockZ = (int) randomZ;
 
-            // 안전한 높이 찾기 (y=256부터 y=0까지 탐색 - 높은 곳부터)
-            for (int y = 256; y >= 0; y--) {
+            // 안전한 높이 찾기 (y=120부터 y=63까지 탐색 - 지표면)
+            for (int y = 120; y >= 63; y--) {
                 Block footBlock = world.getBlockAt(blockX, y - 1, blockZ);
                 Block bodyBlock = world.getBlockAt(blockX, y, blockZ);
                 Block headBlock = world.getBlockAt(blockX, y + 1, blockZ);
@@ -67,9 +67,21 @@ public class SafeTeleporter {
                     // 발 아래는 고체 블록이 있어야 함
                     Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
                     if (!groundBlock.isPassable()) {
-                        Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
-                        player.teleport(safeLocation);
-                        return true;
+                        // 동굴 방지: 위 40칸 이내에 천연 고체 블록(흙, 돌, 광석 등)이 있는지 확인
+                        boolean hasSkyAbove = false;
+                        for (int checkY = y + 2; checkY <= Math.min(y + 40, 120); checkY++) {
+                            Block checkBlock = world.getBlockAt(blockX, checkY, blockZ);
+                            if (!checkBlock.isPassable() && !isLiquid(checkBlock)) {
+                                hasSkyAbove = true;
+                                break;
+                            }
+                        }
+
+                        if (hasSkyAbove) {
+                            Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
+                            player.teleport(safeLocation);
+                            return true;
+                        }
                     }
                 }
             }
@@ -93,6 +105,14 @@ public class SafeTeleporter {
 
         // 그 외 블록은 안전하지 않음 (물, 용암, 일반 블록 등)
         return false;
+    }
+
+    /**
+     * 블록이 액체인지 확인
+     */
+    private static boolean isLiquid(Block block) {
+        Material type = block.getType();
+        return type == Material.WATER || type == Material.LAVA;
     }
 
 
