@@ -12,7 +12,7 @@ commands:
     permission: advancedrace.command.streamer
   팀선택:
     description: 팀 선택 GUI 열기
-    usage: /팀선택
+    usage: ""
     permission: advancedrace.command.teamselect
   시작:
     description: 게임 시작
