@@ -44,7 +44,6 @@ public class PvPListener implements Listener {
                 if (streamerName.equals(attackerTeam.getStreamer())) {
                     // 같은 팀의 시청자가 스트리머를 때리려고 함
                     event.setCancelled(true);
-                    attacker.sendMessage("§c같은 팀 멤버(스트리머)를 공격할 수 없습니다!");
                     return;
                 }
             }
@@ -61,7 +60,6 @@ public class PvPListener implements Listener {
             } else {
                 // 스트리머가 아니면 공격 취소
                 event.setCancelled(true);
-                attacker.sendMessage("§c같은 팀 멤버를 공격할 수 없습니다!");
                 return;
             }
         }
