@@ -63,6 +63,20 @@ public class HardcoreDeathListener implements Listener {
             // 메시지
             deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다.");
 
+            // 게임 데이터 저장 (팀 제거 사항 저장)
+            com.advancedrace.plugin.AdvancedRace advancedRace = com.advancedrace.plugin.AdvancedRace.getInstance();
+            if (advancedRace != null && advancedRace.getGameStateManager().isRunning()) {
+                long remainingSeconds = 0;
+                if (advancedRace.getGameTimerTask() != null) {
+                    remainingSeconds = advancedRace.getGameTimerTask().getRemainingSeconds();
+                }
+                com.advancedrace.plugin.manager.DataPersistence.saveGameData(
+                    teamManager,
+                    advancedRace.getAdvancementListener().getTeamScores(),
+                    remainingSeconds
+                );
+            }
+
             // 1초 후 스펙테이터 모드로 전환 및 스트리머 추적 시작
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
@@ -78,6 +92,20 @@ public class HardcoreDeathListener implements Listener {
             // 두 번째 이상 사망: 팀에 남아있지만 대기 중 상태로
             // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
             teamManager.setSpawnTier(deadPlayer, 1);
+
+            // 게임 데이터 저장 (SpawnTier 변경 사항 저장)
+            com.advancedrace.plugin.AdvancedRace advancedRace = com.advancedrace.plugin.AdvancedRace.getInstance();
+            if (advancedRace != null && advancedRace.getGameStateManager().isRunning()) {
+                long remainingSeconds = 0;
+                if (advancedRace.getGameTimerTask() != null) {
+                    remainingSeconds = advancedRace.getGameTimerTask().getRemainingSeconds();
+                }
+                com.advancedrace.plugin.manager.DataPersistence.saveGameData(
+                    teamManager,
+                    advancedRace.getAdvancementListener().getTeamScores(),
+                    remainingSeconds
+                );
+            }
 
             // 1초 후 스펙테이터 모드로 전환 및 스트리머 추적 시작
             Bukkit.getScheduler().scheduleSyncDelayedTask(
