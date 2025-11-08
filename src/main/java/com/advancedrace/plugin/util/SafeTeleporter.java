@@ -53,8 +53,8 @@ public class SafeTeleporter {
             double randomX = minX + (random.nextDouble() * (maxX - minX));
             double randomZ = minZ + (random.nextDouble() * (maxZ - minZ));
 
-            // 안전한 높이 찾기 (y=150부터 y=80까지 탐색 - 노출된 지표면)
-            for (int y = 150; y >= 80; y--) {
+            // 안전한 높이 찾기 (y=150부터 y=120까지 탐색 - 높은 지표면, 동굴 제외)
+            for (int y = 150; y >= 120; y--) {
                 Block footBlock = world.getBlockAt((int) randomX, y - 1, (int) randomZ);
                 Block bodyBlock = world.getBlockAt((int) randomX, y, (int) randomZ);
                 Block headBlock = world.getBlockAt((int) randomX, y + 1, (int) randomZ);
@@ -66,7 +66,7 @@ public class SafeTeleporter {
                     if (!groundBlock.isPassable() && isGroundBlock(groundBlock)) {
                         // Y좌표 위에서 실제 고체 블록이 있는지 확인 (동굴 내부 제외)
                         boolean hasSolidBlockAbove = false;
-                        for (int checkY = y + 2; checkY <= y + 20; checkY++) {
+                        for (int checkY = y + 2; checkY <= y + 40; checkY++) {
                             Block checkBlock = world.getBlockAt((int) randomX, checkY, (int) randomZ);
                             if (!checkBlock.isPassable() && !checkBlock.getType().equals(Material.WATER) && !checkBlock.getType().equals(Material.LAVA)) {
                                 hasSolidBlockAbove = true;
