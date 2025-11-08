@@ -56,6 +56,8 @@ public class StreamerDeathListener implements Listener {
             // 시청자가 있으면 무작위로 1명 선택해서 희생
             Player sacrificed = viewers.get(random.nextInt(viewers.size()));
             sacrificeViewer(sacrificed, streamerName);
+            // 스트리머의 모든 포션 효과 제거 (혹시 있을 수 있는 영향 제거)
+            deadPlayer.getActivePotionEffects().forEach(effect -> deadPlayer.removePotionEffect(effect.getType()));
         } else {
             // 시청자가 없으면 스트리머에게 3분간 행동 불가 효과
             applyInactionEffect(deadPlayer);
