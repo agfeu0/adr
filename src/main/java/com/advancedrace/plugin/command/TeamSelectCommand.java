@@ -31,15 +31,15 @@ public class TeamSelectCommand implements CommandExecutor {
             return false;
         }
 
-        // 사망 횟수가 2회 이상이면 팀 선택 불가
-        if (teamManager.getDeathCount(player) >= 2) {
-            player.sendMessage(ChatColor.RED + "더 이상 팀변경은 불가능 합니다.");
-            return false;
-        }
-
         // 소환된 시청자 (SpawnTier가 2)는 스펙테이터 모드가 아니면 사용 불가
         if (teamManager.getSpawnTier(player) == 2 && !teamManager.isSpectatorWithChance(player)) {
             player.sendMessage(ChatColor.RED + "사망 후 스펙테이터 모드에서만 팀을 변경할 수 있습니다.");
+            return false;
+        }
+
+        // 사망 횟수가 2회 이상이면서 스펙테이터 상태가 아니면 팀 선택 불가
+        if (teamManager.getDeathCount(player) >= 2 && !teamManager.isSpectatorWithChance(player)) {
+            player.sendMessage(ChatColor.RED + "더 이상 팀변경은 불가능 합니다.");
             return false;
         }
 
