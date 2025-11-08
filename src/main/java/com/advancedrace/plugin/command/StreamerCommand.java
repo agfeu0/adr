@@ -48,7 +48,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
         if (args.length == 2) {
             colorCode = getColorCode(args[1]);
             if (colorCode == null) {
-                player.sendMessage(ChatColor.RED + "지원하는 색깔: black(검정), dark_blue(진파랑), dark_green(진녹색), dark_cyan/dark_aqua(진청색), dark_red(진빨강), dark_purple(진보라), gold/orange(금색), gray(회색), dark_gray(어두운회색), blue(파랑), green(녹색), aqua/cyan/light_blue(청색), red(빨강), magenta/light_purple(분홍), yellow(노랑), white(하양)");
+                player.sendMessage(ChatColor.RED + "지원하는 색깔: black(검정), dark_blue(진파랑), dark_green(진녹색), dark_cyan/dark_aqua/cyan(청색), dark_red(진빨강), dark_purple(진보라), gold/orange(금색), gray(회색), dark_gray(어두운회색), blue(파랑), green(녹색), aqua/light_blue(하늘색), red(빨강), magenta/light_purple(분홍), yellow(노랑), white(하양)");
                 return false;
             }
         }
@@ -87,7 +87,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
             case "black" -> "§0";
             case "dark_blue" -> "§1";
             case "dark_green" -> "§2";
-            case "dark_cyan", "dark_aqua" -> "§3";
+            case "dark_cyan", "dark_aqua", "cyan" -> "§3";
             case "dark_red" -> "§4";
             case "dark_purple" -> "§5";
             case "gold", "orange" -> "§6";
@@ -95,7 +95,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
             case "dark_gray" -> "§8";
             case "blue" -> "§9";
             case "green" -> "§a";
-            case "aqua", "cyan", "light_blue" -> "§b";
+            case "aqua", "light_blue" -> "§b";
             case "red" -> "§c";
             case "magenta", "light_purple" -> "§d";
             case "yellow" -> "§e";
@@ -109,7 +109,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
             case "§0" -> "검정";
             case "§1" -> "진파랑";
             case "§2" -> "진녹색";
-            case "§3" -> "진청색";
+            case "§3" -> "청색";
             case "§4" -> "진빨강";
             case "§5" -> "진보라";
             case "§6" -> "금색";
@@ -117,7 +117,7 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
             case "§8" -> "어두운회색";
             case "§9" -> "파랑";
             case "§a" -> "녹색";
-            case "§b" -> "청색";
+            case "§b" -> "하늘색";
             case "§c" -> "빨강";
             case "§d" -> "분홍";
             case "§e" -> "노랑";
@@ -142,8 +142,8 @@ public class StreamerCommand implements CommandExecutor, TabCompleter {
         // 2번째 인자일 때 색깔 목록 제공
         else if (args.length == 2) {
             String[] colors = {
-                "black", "dark_blue", "dark_green", "dark_cyan", "dark_aqua", "dark_red", "dark_purple",
-                "gold", "orange", "gray", "dark_gray", "blue", "green", "aqua", "cyan", "light_blue",
+                "black", "dark_blue", "dark_green", "dark_cyan", "dark_aqua", "cyan", "dark_red", "dark_purple",
+                "gold", "orange", "gray", "dark_gray", "blue", "green", "aqua", "light_blue",
                 "red", "magenta", "light_purple", "yellow", "white"
             };
 
