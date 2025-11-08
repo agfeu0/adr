@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +55,15 @@ public class TeamSelectGUI {
 
     private ItemStack createTeamItem(String streamerName, TeamManager.Team team) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta meta = item.getItemMeta();
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         if (meta != null) {
+            // 플레이어 머리 스킨 적용
+            Player streamer = Bukkit.getPlayer(streamerName);
+            if (streamer != null) {
+                meta.setOwningPlayer(streamer);
+            }
+
             meta.setDisplayName(team.getColor() + streamerName);
             List<String> lore = new ArrayList<>();
             lore.add("§7팀원: " + team.getPlayerCount() + "명");
