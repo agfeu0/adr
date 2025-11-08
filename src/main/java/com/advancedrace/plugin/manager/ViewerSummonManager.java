@@ -1,5 +1,6 @@
 package com.advancedrace.plugin.manager;
 
+import com.advancedrace.plugin.listener.PlayerNameListener;
 import com.advancedrace.plugin.util.ViewerInitializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -64,6 +65,10 @@ public class ViewerSummonManager {
             // 소환된 플레이어 표시
             teamManager.markViewerAsSummoned(streamerName, viewer.getName());
 
+            // 네임태그 색상 초기화
+            viewer.customName(null);
+            viewer.setCustomNameVisible(false);
+
             // 소환된 플레이어는 후순위로 설정
             teamManager.setSpawnTier(viewer, 2);
 
@@ -82,6 +87,9 @@ public class ViewerSummonManager {
             // 스코어보드 설정 및 시청자 수 업데이트
             com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
             com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
+
+            // 네임태그 색상 적용
+            PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
 
             viewer.sendMessage("§a✓ 게임에 소환되었습니다!");
 
