@@ -95,19 +95,16 @@ public class AdvancementListener implements Listener {
         }
 
         // Display 정보로 일반/특수 구분
-        int summonCount = 1; // 기본값: 일반 = 1명
-        int scorePoints = 1; // 기본값: 일반 = 1점
+        int summonCount = 3; // 기본값: 3명
+        int scorePoints = 3; // 기본값: 3점
         AdvancementDisplay display = advancement.getDisplay();
         boolean isChallenge = false;
 
-        // 보라색(Challenge) 발전과제는 3명 소환, 3점
-        if (display != null) {
-            String displayInfo = display.toString();
-            if (displayInfo.contains("CHALLENGE") || displayInfo.contains("Challenge")) {
-                summonCount = 3; // 특수(보라색) = 3명
-                scorePoints = 3; // 특수(보라색) = 3점
-                isChallenge = true;
-            }
+        // 보라색(Challenge) 발전과제인지 판정 (중복 체크용)
+        // 마인크래프트 공식 Challenge 발전과제 목록
+        if (isChallengeAdvancement(advancementName)) {
+            isChallenge = true;
+            org.bukkit.Bukkit.getLogger().info("[AdvancedRace] Challenge 발전과제 감지: " + advancementName);
         }
 
         // 특수 발전과제(Challenge)만 중복 체크 (이미 다른 스트리머가 달성했으면 무시)
@@ -196,5 +193,31 @@ public class AdvancementListener implements Listener {
             }
         }
         return false;
+    }
+
+    /**
+     * 마인크래프트 공식 Challenge 발전과제 여부 확인
+     */
+    private boolean isChallengeAdvancement(String advancementName) {
+        // 마인크래프트 공식 Challenge 발전과제 목록 (1.21 기준)
+        return advancementName.contains("minecraft:adventure/summon_iron_golem") ||
+               advancementName.contains("minecraft:adventure/trade_at_world_height") ||
+               advancementName.contains("minecraft:end/respawn_dragon") ||
+               advancementName.contains("minecraft:nether/all_effects") ||
+               advancementName.contains("minecraft:nether/all_potions") ||
+               advancementName.contains("minecraft:nether/all_structures") ||
+               advancementName.contains("minecraft:nether/brew_all_potions") ||
+               advancementName.contains("minecraft:nether/explore_nether") ||
+               advancementName.contains("minecraft:nether/fast_travel") ||
+               advancementName.contains("minecraft:nether/find_fortress") ||
+               advancementName.contains("minecraft:nether/find_bastion") ||
+               advancementName.contains("minecraft:nether/get_wither_skull") ||
+               advancementName.contains("minecraft:nether/get_diamond_from_loot") ||
+               advancementName.contains("minecraft:nether/netherite_armor") ||
+               advancementName.contains("minecraft:nether/obtain_ancient_debris") ||
+               advancementName.contains("minecraft:nether/return_to_sender") ||
+               advancementName.contains("minecraft:nether/see_the_light") ||
+               advancementName.contains("minecraft:story/cure_zombie_villager") ||
+               advancementName.contains("minecraft:story/enter_the_end");
     }
 }
