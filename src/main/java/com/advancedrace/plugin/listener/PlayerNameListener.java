@@ -54,13 +54,6 @@ public class PlayerNameListener implements Listener {
                     teamManager.addPlayerToTeam(player, streamerName);
                     teamManager.setSpawnTier(player, 2);
                     player.setGameMode(GameMode.SURVIVAL);
-
-                    // 스트리머 위치로 텔레포트
-                    Player streamer = Bukkit.getPlayer(streamerName);
-                    if (streamer != null && streamer.isOnline()) {
-                        player.teleport(streamer.getLocation());
-                        player.sendMessage("§a" + streamerName + " 스트리머 위치로 텔레포트되었습니다!");
-                    }
                 }
             } else if (!isStreamer) {
                 // 소환된 시청자가 아니고 스트리머도 아니면 스펙테이터
