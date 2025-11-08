@@ -95,7 +95,7 @@ public class ViewerSummonManager {
             if (plugin != null) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                     PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
-                }, 2);
+                }, 5);
             } else {
                 PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
             }
