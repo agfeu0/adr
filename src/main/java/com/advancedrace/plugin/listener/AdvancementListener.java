@@ -153,18 +153,16 @@ public class AdvancementListener implements Listener {
         }
         DataPersistence.saveGameData(teamManager, teamScores, remainingSeconds);
 
-        // 소환 결과 메시지는 5틱 후에 전송
-        Bukkit.getScheduler().scheduleSyncDelayedTask(
-                Bukkit.getPluginManager().getPlugin("AdvancedRace"),
-                () -> {
-                    if (summoned > 0) {
+        // 소환 결과 메시지는 5틱 후에 전송 (시청자가 소환된 경우만)
+        if (summoned > 0) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(
+                    Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                    () -> {
                         player.sendMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
-                    } else {
-                        player.sendMessage(ChatColor.RED + "→ 소환할 대기 중인 시청자가 없습니다.");
-                    }
-                },
-                5 // 5틱 지연
-        );
+                    },
+                    5 // 5틱 지연
+            );
+        }
     }
 
     /**
