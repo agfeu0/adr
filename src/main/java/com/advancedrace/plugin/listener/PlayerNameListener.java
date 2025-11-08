@@ -60,6 +60,8 @@ public class PlayerNameListener implements Listener {
                 TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
                 if (team != null) {
                     teamManager.addPlayerToTeam(player, streamerName);
+                    // SpawnTier를 1로 초기화 (스폰되지 않은 상태로 설정 - 스트리머 소환 대기)
+                    teamManager.setSpawnTier(player, 1);
                     player.setGameMode(GameMode.SPECTATOR);
 
                     // 스트리머 위치로 텔레포트
