@@ -200,8 +200,8 @@ public class GameStartCommand implements CommandExecutor {
                     }
                 }, 1);
 
-                // 관리자에게 결과 전송
-                player.sendMessage(ChatColor.YELLOW + "텔레포트 결과: 성공 " + successCount + "명, 실패 " + failCount + "명");
+                // 서버 로그에 텔레포트 결과 출력
+                Bukkit.getLogger().info("[AdvancedRace] 텔레포트 결과: 성공 " + successCount + "명, 실패 " + failCount + "명");
 
                 // 모든 온라인 플레이어에게 스코어보드 설정
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
