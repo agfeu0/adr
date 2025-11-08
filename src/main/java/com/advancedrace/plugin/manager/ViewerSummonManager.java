@@ -121,6 +121,20 @@ public class ViewerSummonManager {
             }
         }
 
+        // 게임 데이터 저장 (소환된 시청자의 SpawnTier 정보 저장)
+        com.advancedrace.plugin.AdvancedRace advancedRace = com.advancedrace.plugin.AdvancedRace.getInstance();
+        if (advancedRace != null && advancedRace.getGameStateManager().isRunning()) {
+            long remainingSeconds = 0;
+            if (advancedRace.getGameTimerTask() != null) {
+                remainingSeconds = advancedRace.getGameTimerTask().getRemainingSeconds();
+            }
+            com.advancedrace.plugin.manager.DataPersistence.saveGameData(
+                teamManager,
+                advancedRace.getAdvancementListener().getTeamScores(),
+                remainingSeconds
+            );
+        }
+
         return actualCount;
     }
 
