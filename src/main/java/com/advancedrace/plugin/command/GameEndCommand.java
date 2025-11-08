@@ -60,6 +60,9 @@ public class GameEndCommand implements CommandExecutor {
         // 나침반 추적 정지
         advancedRace.getCompassTrackingManager().stop();
 
+        // gamerule doImmediateRespawn 다시 false로 설정
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule doImmediateRespawn false");
+
         // Bukkit Scoreboard에서 모든 팀 제거
         Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         for (Team scoreboardTeam : mainScoreboard.getTeams()) {
