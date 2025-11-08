@@ -92,12 +92,22 @@ public class ViewerSummonManager {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                     // 스코어보드 설정
                     com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
+
+                    // 현재 팀의 발전과제 점수로 업데이트 (동기화 필요)
+                    int currentScore = com.advancedrace.plugin.manager.DataPersistence.loadTeamScores().getOrDefault(streamerName, 0);
+                    com.advancedrace.plugin.util.ScoreboardManager.updateScore(viewer, currentScore);
+
                     com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
                     // 네임태그 색상 적용
                     PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
                 }, 10);
             } else {
                 com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
+
+                // 현재 팀의 발전과제 점수로 업데이트 (동기화 필요)
+                int currentScore = com.advancedrace.plugin.manager.DataPersistence.loadTeamScores().getOrDefault(streamerName, 0);
+                com.advancedrace.plugin.util.ScoreboardManager.updateScore(viewer, currentScore);
+
                 com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
                 PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
             }
