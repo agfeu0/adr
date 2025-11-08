@@ -70,6 +70,11 @@ public class AdvancementListener implements Listener {
             return;
         }
 
+        // 이미 처리된 발전과제는 무시 (월드 변경 시 중복 이벤트 방지)
+        if (advancementManager.isCompleted(advancementName)) {
+            return;
+        }
+
         // combat 관련 발전과제는 무시 (의도하지 않은 소람 방지)
         if (advancementName.contains("combat") || advancementName.contains("kill")) {
             return;
