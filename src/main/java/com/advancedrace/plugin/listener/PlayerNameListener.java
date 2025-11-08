@@ -117,10 +117,6 @@ public class PlayerNameListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        // 네임태그 색상 초기화
-        player.customName(null);
-        player.setCustomNameVisible(false);
-
         // Scoreboard 팀에서 플레이어 제거
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         for (Team scoreboardTeam : scoreboard.getTeams()) {
