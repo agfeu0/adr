@@ -69,6 +69,9 @@ public class AdvancedRace extends JavaPlugin {
         // 저장된 게임 데이터 로드 시도
         DataPersistence.loadGameData(teamManager);
 
+        // 저장된 완료된 발전과제 로드
+        advancementManager.loadCompletedAdvancements();
+
         // 저장된 팀 점수 로드
         Map<String, Integer> savedScores = DataPersistence.loadTeamScores();
         for (String streamerName : savedScores.keySet()) {
@@ -155,6 +158,12 @@ public class AdvancedRace extends JavaPlugin {
             }
             DataPersistence.saveGameData(teamManager, advancementListener.getTeamScores(), remainingSeconds);
             getLogger().info("AdvancedRace 게임 데이터 저장됨!");
+        }
+
+        // 완료된 발전과제 저장
+        if (advancementManager != null) {
+            advancementManager.saveCompletedAdvancements();
+            getLogger().info("AdvancedRace 발전과제 데이터 저장됨!");
         }
 
         getLogger().info("AdvancedRace 플러그인 비활성화됨!");

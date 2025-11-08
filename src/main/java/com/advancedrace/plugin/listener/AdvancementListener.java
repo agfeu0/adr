@@ -118,6 +118,8 @@ public class AdvancementListener implements Listener {
         // 발전과제 완료 표시 (특수 발전과제만)
         if (isChallenge) {
             advancementManager.markCompleted(advancementName);
+            // 완료된 발전과제를 파일에 저장 (서버 재시작 시 유지)
+            advancementManager.saveCompletedAdvancements();
         }
 
         // 시청자 소환

@@ -1,27 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)",
       "Bash(mvn clean package:*)",
+      "Bash(mvn.cmd clean package:*)",
+      "Bash(cmd /c mvn clean package)",
+      "Bash(dir \"C:\\Program Files\\Maven\\bin\\mvn.cmd\")",
+      "Bash(\"C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2022.2.3\\plugins\\maven\\lib\\maven3\\bin\\mvn\" clean package)",
+      "Bash(powershell -Command \"cd ''C:\\Users\\DD\\pl\\adr''; mvn clean package 2>&1 | Select-String ''BUILD|ERROR''\")",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\n초기 커밋: 발전과제 데스런 플러그인 구현\n\n## 구현된 기능\n\n### 팀 관리 시스템\n- /스트리머 <닉네임>: 스트리머(팀장) 등록\n- /팀선택: 시청자가 팀 선택하는 GUI\n\n### 시청자 규칙\n- 인벤토리 5칸 제한\n- 체력 절반(10)으로 고정\n- 5번 슬롯에 팀장을 가리키는 나침반 고정\n- 하드코어 모드 (사망 시 영구 퇴장)\n- 스트리머 반경 25칸을 벗어나면 어둠(DARKNESS) 효과 적용\n\n### 신호기 기능\n- 신호기 설치 시 팀원에게 메시지 전송\n- 팀원이 [텔레포트] 클릭 시 신호기 위치로 텔레포트\n\n### 전투 규칙\n- 같은 팀 간 공격 불가\n- 타 팀 간 전투 허용\n- 스트리머는 자신의 팀을 공격할 수 있음\n\n### 스트리머 사망 시스템\n- 팀 내 시청자 중 무작위 1명 희생\n- 시청자가 없을 경우 3분간 행동 불가 (Mining Fatigue, Slowness, Jump Boost 255)\n\n### 발전과제 시스템\n- 스트리머가 발전과제 달성 시 시청자 소환\n- 일반 발전과제: 시청자 1명 소환\n- 특수 발전과제: 시청자 3명 소환\n- 중복 달성 방지 (이미 달성한 발전과제는 소환 불가)\n\n### 추가 기능\n- 팀원 처치 시 50% 확률로 네더의 별 획득\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)",
-      "Bash(git rm:*)",
-      "Bash(nul)",
-      "WebFetch(domain:hub.spigotmc.org)",
-      "Bash(find:*)",
-      "Bash(if [ -f target/AdvancedRace-1.0.jar ])",
-      "Bash(then echo \"✓ Build successful\")",
-      "Bash(else echo \"✗ Build failed\")",
-      "Bash(fi)",
-      "Bash(if [ -f target/AdvancedRace-1.0.0.jar ])",
-      "Bash(git reset:*)",
-      "Bash(git checkout:*)",
-      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.jar\" ])",
-      "Bash(if [ -f \"C:\\Users\\DD\\pl\\adr\\target\\AdvancedRace-1.0.0.jar\" ])",
-      "Bash(then echo \"✓ Build successful - JAR created\")",
-      "Bash(ls -la \"C:\\Users\\DD\\pl\\adr\\target\"\" 2>&1 | grep -E \".jar$)",
-      "Bash(total \")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: 스트리머끼리 특수 도전과제(3점) 중복 불가 - 파일 저장으로 영구화\n\n문제:\n- A 스트리머가 도전과제 클리어 → 시청자 소환 O\n- B 스트리머가 같은 도전과제 클리어 → 시청자 소환됨 (중복됨)\n- 서버 재시작 시 기록이 초기화됨\n\n원인:\n- AdvancementManager가 메모리에만 저장\n- 서버 재시작 시 완료된 발전과제 목록이 사라짐\n\n해결:\n1. AdvancementManager에 파일 저장/로드 메서드 추가\n   - saveCompletedAdvancements(): JSON으로 저장\n   - loadCompletedAdvancements(): JSON에서 로드\n\n2. AdvancedRace.java 수정\n   - onEnable(): 플러그인 시작 시 발전과제 로드\n   - onDisable(): 플러그인 종료 시 발전과제 저장\n\n3. AdvancementListener.java 수정\n   - 도전과제 완료 시마다 파일에 저장\n   - 서버 재시작 후에도 중복 방지 유지\n\n파일 경로: plugins/AdvancedRace/completed_advancements.json\n\n동작:\n- A 스트리머가 도전과제 완료 → 저장됨\n- 서버 재시작\n- B 스트리머가 같은 도전과제 클리어 → 소환 X (중복 방지)\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
