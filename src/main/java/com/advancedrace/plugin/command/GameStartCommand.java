@@ -185,6 +185,18 @@ public class GameStartCommand implements CommandExecutor {
                     }
                 }
 
+                // 텔레포트 후 시청자들의 네임태그 색상 재적용 (1틱 지연)
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        // 시청자인 경우만 색상 재적용
+                        TeamManager.Team team = teamManager.getTeam(p);
+                        if (team != null) {
+                            // 시청자 (팀에 속함)
+                            com.advancedrace.plugin.listener.PlayerNameListener.updatePlayerDisplay(p, teamManager);
+                        }
+                    }
+                }, 1);
+
                 // 관리자에게 결과 전송
                 player.sendMessage(ChatColor.YELLOW + "텔레포트 결과: 성공 " + successCount + "명, 실패 " + failCount + "명");
 
