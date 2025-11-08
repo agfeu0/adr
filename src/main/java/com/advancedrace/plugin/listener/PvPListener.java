@@ -35,8 +35,20 @@ public class PvPListener implements Listener {
         // 피해자의 팀 확인
         TeamManager.Team victimTeam = teamManager.getTeam(victim);
 
-        // 피해자가 팀에 속하지 않으면 공격 허용
+        // 피해자가 팀에 속하지 않으면, 스트리머인지 확인
         if (victimTeam == null) {
+            // 피해자가 스트리머인지 확인
+            if (isStreamer(victim)) {
+                // 공격자가 같은 팀의 시청자인지 확인
+                String streamerName = victim.getName();
+                if (streamerName.equals(attackerTeam.getStreamer())) {
+                    // 같은 팀의 시청자가 스트리머를 때리려고 함
+                    event.setCancelled(true);
+                    attacker.sendMessage("§c같은 팀 멤버(스트리머)를 공격할 수 없습니다!");
+                    return;
+                }
+            }
+            // 피해자가 팀에 속하지 않고 스트리머도 아니면 공격 허용
             return;
         }
 
