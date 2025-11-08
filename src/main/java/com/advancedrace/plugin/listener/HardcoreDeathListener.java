@@ -56,7 +56,7 @@ public class HardcoreDeathListener implements Listener {
             teamManager.grantDeathChance(deadPlayer);
 
             // 메시지
-            deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다. /팀선택 명령어로 다른 팀에 참가할 수 있습니다.");
+            deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다.");
 
             // 1초 후 스펙테이터 모드로 전환 및 스펙테이터 등록
             Bukkit.getScheduler().scheduleSyncDelayedTask(
