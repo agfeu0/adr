@@ -64,9 +64,17 @@ public class SafeTeleporter {
                     // 발 아래는 실제 고체 블록이 있어야 함 (동굴 제외)
                     Block groundBlock = world.getBlockAt((int) randomX, y - 2, (int) randomZ);
                     if (!groundBlock.isPassable() && isGroundBlock(groundBlock)) {
-                        // 위아래 안전성 추가 확인 (동굴 제외)
-                        Block aboveHead = world.getBlockAt((int) randomX, y + 2, (int) randomZ);
-                        if (isSafeBlock(aboveHead)) {
+                        // Y좌표 위에서 실제 고체 블록이 있는지 확인 (동굴 내부 제외)
+                        boolean hasSolidBlockAbove = false;
+                        for (int checkY = y + 2; checkY <= y + 20; checkY++) {
+                            Block checkBlock = world.getBlockAt((int) randomX, checkY, (int) randomZ);
+                            if (!checkBlock.isPassable() && !checkBlock.getType().equals(Material.WATER) && !checkBlock.getType().equals(Material.LAVA)) {
+                                hasSolidBlockAbove = true;
+                                break;
+                            }
+                        }
+
+                        if (hasSolidBlockAbove) {
                             Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
                             player.teleport(safeLocation);
                             return true;
