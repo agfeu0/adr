@@ -33,6 +33,13 @@ public class DistanceLimitTask extends BukkitRunnable {
                 continue;
             }
 
+            // 소환된 시청자(SpawnTier == 2)에게만 거리 제한 적용
+            if (teamManager.getSpawnTier(player) != 2) {
+                // 소환되지 않은 플레이어는 어둠 효과 제거
+                player.removePotionEffect(PotionEffectType.DARKNESS);
+                continue;
+            }
+
             // 스트리머 찾기
             String streamerName = team.getStreamer();
             Player streamer = Bukkit.getPlayer(streamerName);
