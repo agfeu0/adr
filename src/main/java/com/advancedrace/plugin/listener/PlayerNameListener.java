@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +28,22 @@ public class PlayerNameListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        // 게임 진행 중이면 스트리머가 아닌 모든 플레이어를 스펙테이터로 설정
+        if (AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+            boolean isStreamer = false;
+            for (String streamerName : teamManager.getStreamerNames()) {
+                if (streamerName.equals(player.getName())) {
+                    isStreamer = true;
+                    break;
+                }
+            }
+
+            if (!isStreamer) {
+                player.setGameMode(GameMode.SPECTATOR);
+                player.sendMessage("§e게임이 진행 중입니다. 스펙테이터 모드로 입장합니다.");
+            }
+        }
 
         // 저장된 팀 정보 확인 및 자동 추가
         String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
