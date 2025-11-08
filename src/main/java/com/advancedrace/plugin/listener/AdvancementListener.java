@@ -159,9 +159,7 @@ public class AdvancementListener implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                     () -> {
-                        if (isFirstChallengeMessage) {
-                            player.sendMessage(ChatColor.GREEN + "→ 시청자 3명이 소환되었습니다!");
-                        } else if (summoned > 0) {
+                        if (summoned > 0) {
                             player.sendMessage(ChatColor.GREEN + "→ 시청자 " + summoned + "명이 소환되었습니다!");
                         } else {
                             player.sendMessage(ChatColor.RED + "→ 소환할 대기 중인 시청자가 없습니다.");
