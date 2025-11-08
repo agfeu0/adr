@@ -106,26 +106,13 @@ public class SafeTeleporter {
     }
 
     /**
-     * 블록이 유효한 지면인지 확인 (잔디, 나뭇잎, 눈, 얼음)
+     * 블록이 유효한 지면인지 확인
      */
     private static boolean isValidGroundBlock(Block block) {
         Material type = block.getType();
 
-        return type == Material.GRASS_BLOCK ||
-               type == Material.SNOW_BLOCK ||
-               type == Material.SNOW ||
-               type == Material.ICE ||
-               type == Material.PACKED_ICE ||
-               type == Material.BLUE_ICE ||
-               type == Material.OAK_LEAVES ||
-               type == Material.SPRUCE_LEAVES ||
-               type == Material.BIRCH_LEAVES ||
-               type == Material.JUNGLE_LEAVES ||
-               type == Material.ACACIA_LEAVES ||
-               type == Material.DARK_OAK_LEAVES ||
-               type == Material.MANGROVE_LEAVES ||
-               type == Material.CHERRY_LEAVES ||
-               type == Material.AZALEA_LEAVES;
+        // 액체와 공기가 아니면 대부분 안전한 지면으로 처리
+        return !isLiquid(block) && type != Material.AIR && type != Material.CAVE_AIR && type != Material.VOID_AIR;
     }
 
 
