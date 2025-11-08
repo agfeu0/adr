@@ -222,6 +222,32 @@ public class GameEndCommand implements CommandExecutor {
                         )
                     )
                 );
+
+                // 점수 리스트 메시지 표시
+                streamer.sendMessage("");
+                streamer.sendMessage(ChatColor.GOLD + "========== 최종 순위 ==========");
+                for (int i = 0; i < scoredStreamers.size(); i++) {
+                    String name = scoredStreamers.get(i).getKey();
+                    int score = scoredStreamers.get(i).getValue();
+                    TeamManager.Team team = teamManager.getTeamByStreamer(name);
+                    int viewers = team != null ? team.getPlayerCount() : 0;
+
+                    String rank = (i + 1) + "위";
+                    String info = name + " (점수: " + score + ", 시청자: " + viewers + ")";
+
+                    if (i == 0) {
+                        // 1위는 금색
+                        streamer.sendMessage(ChatColor.GOLD + rank + ": " + info);
+                    } else if (i == 1) {
+                        // 2위는 회색
+                        streamer.sendMessage(ChatColor.GRAY + rank + ": " + info);
+                    } else {
+                        // 3위 이상은 어두운 회색
+                        streamer.sendMessage(ChatColor.DARK_GRAY + rank + ": " + info);
+                    }
+                }
+                streamer.sendMessage(ChatColor.GOLD + "================================");
+                streamer.sendMessage("");
             }
         }
     }
