@@ -62,11 +62,13 @@ public class SafeTeleporter {
                 Block bodyBlock = world.getBlockAt(blockX, y, blockZ);
                 Block headBlock = world.getBlockAt(blockX, y + 1, blockZ);
 
-                // 안전한 블록인지 확인 (발, 몸, 머리가 모두 통과 가능)
-                if (isSafeBlock(footBlock) && isSafeBlock(bodyBlock) && isSafeBlock(headBlock)) {
+                // 안전한 블록인지 확인 (발, 몸, 머리가 모두 통과 가능하고 물/용암 아님)
+                if (isSafeBlock(footBlock) && isSafeBlock(bodyBlock) && isSafeBlock(headBlock) &&
+                    !isLiquid(footBlock) && !isLiquid(bodyBlock) && !isLiquid(headBlock)) {
+
                     // 발 아래는 고체 블록이 있어야 함
                     Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
-                    if (!groundBlock.isPassable()) {
+                    if (!groundBlock.isPassable() && !isLiquid(groundBlock)) {
                         // 동굴 방지: 위 40칸 이내에 천연 고체 블록(흙, 돌, 광석 등)이 있는지 확인
                         boolean hasSkyAbove = false;
                         for (int checkY = y + 2; checkY <= Math.min(y + 40, 120); checkY++) {
