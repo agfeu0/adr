@@ -99,7 +99,7 @@ public class StreamerDeathListener implements Listener {
         // 메시지
         Bukkit.broadcastMessage(ChatColor.RED + streamer.getName() + "님의 팀에 시청자가 없어서 3분간 관전 모드가 되었습니다.");
         streamer.sendMessage(ChatColor.YELLOW + "죽은 위치에서 5칸 범위를 벗어나면 자동으로 돌아옵니다.");
-        streamer.sendMessage(ChatColor.YELLOW + "3분 후 서바이벌 모드로 복구됩니다!");
+        streamer.sendMessage(ChatColor.YELLOW + "3분 후 행동 불가 상태가 해제됩니다!");
 
         // 경계 체크 태스크 시작 (3초마다, 60틱)
         BukkitTask boundaryTask = Bukkit.getScheduler().runTaskTimer(
