@@ -115,10 +115,11 @@ public class GameEndCommand implements CommandExecutor {
             onlinePlayer.setCustomNameVisible(false);
         }
 
-        // 게임 데이터 삭제
-        DataPersistence.deleteGameData();
+        // 게임 데이터 보존 (재시작 시 팀 정보 복원을 위해)
+        // 팀-플레이어 관계는 DataPersistence에 저장된 채로 유지
+        // DataPersistence.deleteGameData(); // 주석 처리: 팀 정보 유지
 
-        // 모든 팀 제거
+        // 모든 팀 제거 (게임 메모리에서만 제거)
         teamManager.removeAllTeams();
 
         // 모든 플레이어의 팀 변경 기회 초기화
