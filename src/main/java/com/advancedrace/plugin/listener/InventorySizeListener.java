@@ -98,6 +98,11 @@ public class InventorySizeListener implements Listener {
         if (event.getItemDrop().getItemStack().getType() == Material.COMPASS) {
             event.setCancelled(true);
         }
+
+        // 베리어가 버려지려고 하면 방지
+        if (event.getItemDrop().getItemStack().getType() == Material.BARRIER) {
+            event.setCancelled(true);
+        }
     }
 
     private boolean isStreamer(Player player) {
