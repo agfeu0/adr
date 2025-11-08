@@ -7,6 +7,7 @@ import com.advancedrace.plugin.manager.GameStateManager;
 import com.advancedrace.plugin.manager.TeamManager;
 import com.advancedrace.plugin.task.GameTimerTask;
 import com.advancedrace.plugin.util.SafeTeleporter;
+import com.advancedrace.plugin.util.ScoreboardManager;
 import com.advancedrace.plugin.util.TablistManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -186,6 +187,25 @@ public class GameStartCommand implements CommandExecutor {
 
                 // 관리자에게 결과 전송
                 player.sendMessage(ChatColor.YELLOW + "텔레포트 결과: 성공 " + successCount + "명, 실패 " + failCount + "명");
+
+                // 모든 팀의 플레이어에게 스코어보드 설정
+                for (String streamerName : teamManager.getStreamerNames()) {
+                    // 스트리머에게 스코어보드 설정
+                    Player streamer = Bukkit.getPlayer(streamerName);
+                    if (streamer != null && streamer.isOnline()) {
+                        ScoreboardManager.setupScoreboard(streamer, teamManager);
+                    }
+
+                    // 팀에 속한 모든 시청자에게 스코어보드 설정
+                    TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+                    if (team != null) {
+                        for (Player teamPlayer : team.getPlayers()) {
+                            if (teamPlayer.isOnline()) {
+                                ScoreboardManager.setupScoreboard(teamPlayer, teamManager);
+                            }
+                        }
+                    }
+                }
 
                 // 게임 타이머 시작 (설정에서 가져온 시간)
                 long gameDurationSeconds = advancedRace.getGameDurationSeconds();
