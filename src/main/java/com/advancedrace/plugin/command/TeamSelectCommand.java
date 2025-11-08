@@ -26,12 +26,6 @@ public class TeamSelectCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        // 게임이 진행 중이면 팀 변경 불가
-        if (AdvancedRace.getInstance().getGameStateManager().isRunning()) {
-            player.sendMessage(ChatColor.RED + "게임 진행 중에는 팀을 변경할 수 없습니다.");
-            return false;
-        }
-
         // 스트리머인 경우 사용 불가
         if (isStreamer(player)) {
             player.sendMessage(ChatColor.RED + "스트리머는 이 명령어를 사용할 수 없습니다.");
