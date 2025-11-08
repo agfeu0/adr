@@ -188,23 +188,9 @@ public class GameStartCommand implements CommandExecutor {
                 // 관리자에게 결과 전송
                 player.sendMessage(ChatColor.YELLOW + "텔레포트 결과: 성공 " + successCount + "명, 실패 " + failCount + "명");
 
-                // 모든 팀의 플레이어에게 스코어보드 설정
-                for (String streamerName : teamManager.getStreamerNames()) {
-                    // 스트리머에게 스코어보드 설정
-                    Player streamer = Bukkit.getPlayer(streamerName);
-                    if (streamer != null && streamer.isOnline()) {
-                        ScoreboardManager.setupScoreboard(streamer, teamManager);
-                    }
-
-                    // 팀에 속한 모든 시청자에게 스코어보드 설정
-                    TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
-                    if (team != null) {
-                        for (Player teamPlayer : team.getPlayers()) {
-                            if (teamPlayer.isOnline()) {
-                                ScoreboardManager.setupScoreboard(teamPlayer, teamManager);
-                            }
-                        }
-                    }
+                // 모든 온라인 플레이어에게 스코어보드 설정
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    ScoreboardManager.setupScoreboard(onlinePlayer, teamManager);
                 }
 
                 // 게임 타이머 시작 (설정에서 가져온 시간)
