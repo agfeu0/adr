@@ -63,12 +63,14 @@ public class HardcoreDeathListener implements Listener {
             // 메시지
             deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다.");
 
-            // 1초 후 스펙테이터 모드로 전환 및 스펙테이터 등록
+            // 1초 후 스펙테이터 모드로 전환 및 스트리머 추적 시작
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                     () -> {
                         deadPlayer.setGameMode(GameMode.SPECTATOR);
                         teamManager.markAsSpectator(deadPlayer);
+                        // 스트리머 추적 시작
+                        startFollowingStreamer(deadPlayer, team);
                     },
                     20 // 1초 = 20틱
             );
