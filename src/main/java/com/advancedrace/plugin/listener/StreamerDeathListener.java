@@ -98,11 +98,11 @@ public class StreamerDeathListener implements Listener {
 
         // 메시지
         Bukkit.broadcastMessage(ChatColor.RED + streamer.getName() + "님의 팀에 시청자가 없어서 3분간 관전 모드가 되었습니다.");
-        streamer.sendMessage(ChatColor.YELLOW + "죽은 위치에서 5칸 범위를 벗어나면 자동으로 돌아옵니다.");
+        streamer.sendMessage(ChatColor.YELLOW + "3분간 움직일 수 없습니다.");
         streamer.sendMessage(ChatColor.YELLOW + "3분 후 행동 불가 상태가 해제됩니다!");
 
-        // 경계 체크 태스크 시작 (3초마다, 60틱)
-        BukkitTask boundaryTask = Bukkit.getScheduler().runTaskTimer(
+        // 움직임 방지 태스크 시작 (매 틱마다 원래 위치로 텔레포트)
+        BukkitTask immobilizeTask = Bukkit.getScheduler().runTaskTimer(
                 Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                 () -> {
                     if (!streamer.isOnline() || streamer.getGameMode() != GameMode.SPECTATOR) {
@@ -114,19 +114,16 @@ public class StreamerDeathListener implements Listener {
                         return;
                     }
 
-                    Location currentLocation = streamer.getLocation();
                     Location deathLoc = streamerDeathLocations.get(streamerName);
-
-                    if (deathLoc != null && currentLocation.distance(deathLoc) > 5) {
-                        // 5칸을 벗어났으면 사망 위치로 텔레포트
+                    if (deathLoc != null) {
+                        // 원래 사망 위치로 매 틱마다 텔레포트 (움직임 불가)
                         streamer.teleport(deathLoc);
-                        streamer.sendMessage(ChatColor.RED + "죽은 위치에서 5칸을 벗어났습니다. 되돌려집니다.");
                     }
                 },
-                60L, // 초기 딜레이
-                60L  // 반복 간격 (3초)
+                0L, // 초기 딜레이 없음
+                1L  // 매 틱마다 실행
         );
-        streamerBoundaryTasks.put(streamerName, boundaryTask);
+        streamerBoundaryTasks.put(streamerName, immobilizeTask);
 
         // 3분 후 (3600틱) 서바이벌 모드로 복구
         Bukkit.getScheduler().scheduleSyncDelayedTask(
