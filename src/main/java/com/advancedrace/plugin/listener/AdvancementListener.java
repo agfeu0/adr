@@ -102,6 +102,7 @@ public class AdvancementListener implements Listener {
 
         // 보라색(Challenge) 발전과제인지 판정
         // 마인크래프트 공식 Challenge 발전과제 목록
+        boolean isFirstChallengeClear = false;
         if (isChallengeAdvancement(advancementName)) {
             isChallenge = true;
             org.bukkit.Bukkit.getLogger().info("[AdvancedRace] Challenge 발전과제 감지: " + advancementName);
@@ -111,6 +112,7 @@ public class AdvancementListener implements Listener {
                 // 첫 달성자: 3명 소환 + 3점
                 summonCount = 3;
                 scorePoints = 3;
+                isFirstChallengeClear = true;
                 advancementManager.markCompleted(advancementName);
                 // 완료된 발전과제를 파일에 저장 (서버 재시작 시 유지)
                 advancementManager.saveCompletedAdvancements();
@@ -121,8 +123,9 @@ public class AdvancementListener implements Listener {
             }
         }
 
-        // 시청자 소환
-        int summoned = viewerSummonManager.summonViewers(player.getName(), summonCount);
+        // 시청자 소환 (첫 Challenge 달성자 또는 일반 발전과제만)
+        final int summoned = (isFirstChallengeClear || !isChallenge) ?
+            viewerSummonManager.summonViewers(player.getName(), summonCount) : 0;
 
         // 팀의 발전과제 점수 업데이트
         String streamerName = player.getName();
