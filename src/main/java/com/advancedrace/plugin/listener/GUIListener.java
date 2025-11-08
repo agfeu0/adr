@@ -53,6 +53,10 @@ public class GUIListener implements Listener {
 
         // 팀에 추가
         if (teamManager.addPlayerToTeam(player, streamerName)) {
+            // 기존 네임태그 색상 초기화
+            player.customName(null);
+            player.setCustomNameVisible(false);
+
             // SpawnTier를 1로 설정 (대기 중 상태)
             teamManager.setSpawnTier(player, 1);
 
