@@ -66,9 +66,9 @@ public class SafeTeleporter {
                 if (isSafeBlock(footBlock) && isSafeBlock(bodyBlock) && isSafeBlock(headBlock) &&
                     !isLiquid(footBlock) && !isLiquid(bodyBlock) && !isLiquid(headBlock)) {
 
-                    // 발 아래는 고체 블록이 있어야 함
+                    // 발 아래는 잔디, 나뭇잎, 눈, 얼음 블록만 허용
                     Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
-                    if (!groundBlock.isPassable() && !isLiquid(groundBlock)) {
+                    if (isValidGroundBlock(groundBlock)) {
                         // 동굴 방지: 위 40칸 이내에 천연 고체 블록(흙, 돌, 광석 등)이 있는지 확인
                         boolean hasSkyAbove = false;
                         for (int checkY = y + 2; checkY <= Math.min(y + 40, 120); checkY++) {
@@ -115,6 +115,29 @@ public class SafeTeleporter {
     private static boolean isLiquid(Block block) {
         Material type = block.getType();
         return type == Material.WATER || type == Material.LAVA;
+    }
+
+    /**
+     * 블록이 유효한 지면인지 확인 (잔디, 나뭇잎, 눈, 얼음)
+     */
+    private static boolean isValidGroundBlock(Block block) {
+        Material type = block.getType();
+
+        return type == Material.GRASS_BLOCK ||
+               type == Material.SNOW_BLOCK ||
+               type == Material.SNOW ||
+               type == Material.ICE ||
+               type == Material.PACKED_ICE ||
+               type == Material.BLUE_ICE ||
+               type == Material.OAK_LEAVES ||
+               type == Material.SPRUCE_LEAVES ||
+               type == Material.BIRCH_LEAVES ||
+               type == Material.JUNGLE_LEAVES ||
+               type == Material.ACACIA_LEAVES ||
+               type == Material.DARK_OAK_LEAVES ||
+               type == Material.MANGROVE_LEAVES ||
+               type == Material.CHERRY_LEAVES ||
+               type == Material.AZALEA_LEAVES;
     }
 
 
