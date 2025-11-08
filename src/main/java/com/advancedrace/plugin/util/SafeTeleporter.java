@@ -69,21 +69,9 @@ public class SafeTeleporter {
                     // 발 아래는 잔디, 나뭇잎, 눈, 얼음 블록만 허용
                     Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
                     if (isValidGroundBlock(groundBlock)) {
-                        // 동굴 방지: 위 40칸 이내에 천연 고체 블록(흙, 돌, 광석 등)이 있는지 확인
-                        boolean hasSkyAbove = false;
-                        for (int checkY = y + 2; checkY <= Math.min(y + 40, 120); checkY++) {
-                            Block checkBlock = world.getBlockAt(blockX, checkY, blockZ);
-                            if (!checkBlock.isPassable() && !isLiquid(checkBlock)) {
-                                hasSkyAbove = true;
-                                break;
-                            }
-                        }
-
-                        if (hasSkyAbove) {
-                            Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
-                            player.teleport(safeLocation);
-                            return true;
-                        }
+                        Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
+                        player.teleport(safeLocation);
+                        return true;
                     }
                 }
             }
