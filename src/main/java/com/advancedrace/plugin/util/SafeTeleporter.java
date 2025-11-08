@@ -53,21 +53,29 @@ public class SafeTeleporter {
             double randomX = minX + (random.nextDouble() * (maxX - minX));
             double randomZ = minZ + (random.nextDouble() * (maxZ - minZ));
 
+            int blockX = (int) randomX;
+            int blockZ = (int) randomZ;
+
+            // 청크가 로드되지 않았으면 건너뛰기
+            if (!world.isChunkLoaded(blockX >> 4, blockZ >> 4)) {
+                continue;
+            }
+
             // 안전한 높이 찾기 (y=150부터 y=120까지 탐색 - 높은 지표면, 동굴 제외)
             for (int y = 150; y >= 120; y--) {
-                Block footBlock = world.getBlockAt((int) randomX, y - 1, (int) randomZ);
-                Block bodyBlock = world.getBlockAt((int) randomX, y, (int) randomZ);
-                Block headBlock = world.getBlockAt((int) randomX, y + 1, (int) randomZ);
+                Block footBlock = world.getBlockAt(blockX, y - 1, blockZ);
+                Block bodyBlock = world.getBlockAt(blockX, y, blockZ);
+                Block headBlock = world.getBlockAt(blockX, y + 1, blockZ);
 
                 // 안전한 블록인지 확인
                 if (isSafeBlock(footBlock) && isSafeBlock(bodyBlock) && isSafeBlock(headBlock)) {
                     // 발 아래는 실제 고체 블록이 있어야 함 (동굴 제외)
-                    Block groundBlock = world.getBlockAt((int) randomX, y - 2, (int) randomZ);
+                    Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
                     if (!groundBlock.isPassable() && isGroundBlock(groundBlock)) {
                         // Y좌표 위에서 실제 고체 블록이 있는지 확인 (동굴 내부 제외)
                         boolean hasSolidBlockAbove = false;
                         for (int checkY = y + 2; checkY <= y + 40; checkY++) {
-                            Block checkBlock = world.getBlockAt((int) randomX, checkY, (int) randomZ);
+                            Block checkBlock = world.getBlockAt(blockX, checkY, blockZ);
                             if (!checkBlock.isPassable() && !checkBlock.getType().equals(Material.WATER) && !checkBlock.getType().equals(Material.LAVA)) {
                                 hasSolidBlockAbove = true;
                                 break;
