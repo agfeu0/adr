@@ -91,10 +91,10 @@ public class PlayerNameListener implements Listener {
 
         updatePlayerDisplay(player, teamManager);
 
-        // 스코어보드 설정 (스트리머 또는 소환된 시청자만)
+        // 스코어보드 설정 (스트리머 또는 팀에 속한 모든 시청자)
         String playerStreamer = DataPersistence.getStreamerForPlayer(player.getName());
-        if (playerStreamer == null || teamManager.getSpawnTier(player) == 2) {
-            // playerStreamer == null = 스트리머 / getSpawnTier(player) == 2 = 소환된 시청자
+        if (playerStreamer == null || teamManager.getTeam(player) != null) {
+            // playerStreamer == null = 스트리머 / teamManager.getTeam(player) != null = 팀에 속한 모든 시청자
             ScoreboardManager.setupScoreboard(player, teamManager);
         }
 
