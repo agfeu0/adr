@@ -10,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +87,16 @@ public class BeaconListener implements Listener {
         for (Player teammate : survivingTeammates) {
             teammate.teleport(streamerLocation);
             teammate.sendMessage("§a" + streamerName + " 스트리머에게 텔레포트되었습니다!");
+
+            // 어둠 효과 제거
+            teammate.removePotionEffect(PotionEffectType.DARKNESS);
+        }
+
+        // 팀의 모든 플레이어(온라인 상태)에게 어둠 효과 제거
+        for (Player teamPlayer : team.getPlayers()) {
+            if (teamPlayer.isOnline()) {
+                teamPlayer.removePotionEffect(PotionEffectType.DARKNESS);
+            }
         }
 
         player.sendMessage("§a✓ 생존 중인 팀원 " + survivingTeammates.size() + "명을 텔레포트했습니다!");
