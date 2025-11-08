@@ -48,22 +48,16 @@ public class HardcoreDeathListener implements Listener {
             deadPlayer.getWorld().dropItem(deadPlayer.getLocation(), new ItemStack(Material.NETHER_STAR));
         }
 
-        // 첫 번째 사망: 팀 변경 기회 부여
+        // 첫 번째 사망: 팀에 남아있으면서 대기 중 상태로
         if (deathCount == 1) {
             // 소환된 시청자 정보 제거 (다른 팀에서 중복 소환 방지)
             String streamerName = team.getStreamer();
             teamManager.removeSummonedViewer(streamerName, deadPlayer.getName());
 
-            // 팀에서 제거 (팀 변경 가능하도록)
-            teamManager.removePlayer(deadPlayer);
+            // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
+            teamManager.setSpawnTier(deadPlayer, 1);
 
-            // 팀 변경 기회 부여
-            teamManager.grantDeathChance(deadPlayer);
-
-            // 메시지
-            deadPlayer.sendMessage(ChatColor.YELLOW + "1회 팀 변경이 가능합니다.");
-
-            // 게임 데이터 저장 (팀 제거 사항 저장)
+            // 게임 데이터 저장 (SpawnTier 변경 사항 저장)
             com.advancedrace.plugin.AdvancedRace advancedRace = com.advancedrace.plugin.AdvancedRace.getInstance();
             if (advancedRace != null && advancedRace.getGameStateManager().isRunning()) {
                 long remainingSeconds = 0;
