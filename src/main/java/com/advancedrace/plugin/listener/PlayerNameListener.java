@@ -157,6 +157,13 @@ public class PlayerNameListener implements Listener {
                 scoreboardTeam.addEntry(player.getName());
             }
 
+            // 네임태그 색상 설정 (시청자만)
+            if (!isStreamer) {
+                Component customName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
+                player.customName(customName);
+                player.setCustomNameVisible(true);
+            }
+
             // 탭리스트: 스트리머는 닉네임만, 시청자는 [팀이름팀] 접두사
             if (isStreamer) {
                 Component listName = Component.text(player.getName(), TextColor.color(getColorValue(team.getColor())));
