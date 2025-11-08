@@ -95,16 +95,31 @@ public class StreamerDeathListener implements Listener {
         // Jump Boost 255 (점프 불가 - 점프 높이 제거)
         streamer.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, 254, false, false), true);
 
+        // Invulnerability (무적) - 3분간
+        streamer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, duration, 255, false, false), true);
+
         // 메시지
         Bukkit.broadcastMessage(ChatColor.RED + streamer.getName() + "님의 팀에 시청자가 없어서 3분간 행동 불가 상태가 되었습니다.");
         streamer.sendMessage(ChatColor.YELLOW + "3분 후 행동 가능!");
 
-        // 3분 후 메시지
+        // 3분 후 행동 불능 효과 제거 및 저항 2 적용 (10초)
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                 () -> {
                     if (streamer.isOnline()) {
+                        // Mining Fatigue, Slowness, Jump Boost 제거
+                        streamer.removePotionEffect(PotionEffectType.MINING_FATIGUE);
+                        streamer.removePotionEffect(PotionEffectType.SLOWNESS);
+                        streamer.removePotionEffect(PotionEffectType.JUMP_BOOST);
+
+                        // 무적 제거
+                        streamer.removePotionEffect(PotionEffectType.RESISTANCE);
+
+                        // 저항 2 적용 (10초 = 200틱)
+                        streamer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 200, 1, false, false), true);
+
                         streamer.sendMessage(ChatColor.GREEN + "✓ 행동 불가 상태가 해제되었습니다!");
+                        streamer.sendMessage(ChatColor.YELLOW + "10초간 저항 2 상태입니다.");
                     }
                 },
                 duration
