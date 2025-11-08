@@ -77,7 +77,7 @@ public class AdvancementListener implements Listener {
 
         // 음식/식음료 관련 발전과제는 무시 (황금사과 섭취 등으로 인한 의도하지 않은 소환 방지)
         if (advancementName.contains("food") || advancementName.contains("eat") ||
-            advancementName.contains("drink") || advancementName.contains("husbandry")) {
+            advancementName.contains("drink")) {
             return;
         }
 
@@ -200,9 +200,19 @@ public class AdvancementListener implements Listener {
      */
     private boolean isChallengeAdvancement(String advancementName) {
         // 마인크래프트 공식 Challenge 발전과제 목록 (1.21 기준)
+        // Adventure (모험)
         return advancementName.contains("minecraft:adventure/summon_iron_golem") ||
                advancementName.contains("minecraft:adventure/trade_at_world_height") ||
+               advancementName.contains("minecraft:adventure/two_birds_one_arrow") ||
+               advancementName.contains("minecraft:adventure/wax_on") ||
+               advancementName.contains("minecraft:adventure/wax_off") ||
+               advancementName.contains("minecraft:adventure/lightning_rod_with_lightning_rod_block") ||
+               advancementName.contains("minecraft:adventure/walk_on_powder_snow_with_leather_boots") ||
+               advancementName.contains("minecraft:adventure/hero_of_the_village") ||
+               // End (끝)
                advancementName.contains("minecraft:end/respawn_dragon") ||
+               advancementName.contains("minecraft:end/dragon_breath") ||
+               // Nether (네더)
                advancementName.contains("minecraft:nether/all_effects") ||
                advancementName.contains("minecraft:nether/all_potions") ||
                advancementName.contains("minecraft:nether/all_structures") ||
@@ -217,7 +227,15 @@ public class AdvancementListener implements Listener {
                advancementName.contains("minecraft:nether/obtain_ancient_debris") ||
                advancementName.contains("minecraft:nether/return_to_sender") ||
                advancementName.contains("minecraft:nether/see_the_light") ||
+               // Story (이야기)
                advancementName.contains("minecraft:story/cure_zombie_villager") ||
-               advancementName.contains("minecraft:story/enter_the_end");
+               advancementName.contains("minecraft:story/enter_the_end") ||
+               // Husbandry (농업)
+               advancementName.contains("minecraft:husbandry/breed_an_animal") ||
+               advancementName.contains("minecraft:husbandry/allay_deliver_item_to_player") ||
+               advancementName.contains("minecraft:husbandry/complete_catalogue") ||
+               advancementName.contains("minecraft:husbandry/tactical_fishing") ||
+               advancementName.contains("minecraft:husbandry/obtain_netherite_hoe") ||
+               advancementName.contains("minecraft:husbandry/plant_seed_and_progress_to_flower");
     }
 }
