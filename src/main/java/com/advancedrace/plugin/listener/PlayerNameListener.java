@@ -55,8 +55,21 @@ public class PlayerNameListener implements Listener {
                     teamManager.setSpawnTier(player, 2);
                     player.setGameMode(GameMode.SURVIVAL);
                 }
+            } else if (streamerName != null) {
+                // 팀에 속한 관전자(죽은 시청자): 스펙테이터로 입장하고 스트리머에게 텔레포트
+                TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+                if (team != null) {
+                    teamManager.addPlayerToTeam(player, streamerName);
+                    player.setGameMode(GameMode.SPECTATOR);
+
+                    // 스트리머 위치로 텔레포트
+                    Player streamer = Bukkit.getPlayer(streamerName);
+                    if (streamer != null && streamer.isOnline()) {
+                        player.teleport(streamer.getLocation());
+                    }
+                }
             } else if (!isStreamer) {
-                // 소환된 시청자가 아니고 스트리머도 아니면 스펙테이터
+                // 팀에 속하지 않은 스펙테이터
                 player.setGameMode(GameMode.SPECTATOR);
                 player.sendMessage("§e게임이 진행 중입니다. 스펙테이터 모드로 입장합니다.");
             }
