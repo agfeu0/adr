@@ -155,7 +155,7 @@ public class ViewerInitializer {
 
         String worldName = getWorldNameKorean(streamerLocation.getWorld().getName());
 
-        Component message = Component.text("팀장이 ", NamedTextColor.YELLOW)
+        Component message = Component.text("스트리머가 ", NamedTextColor.YELLOW)
                 .append(Component.text(worldName, NamedTextColor.GOLD))
                 .append(Component.text("에 있습니다", NamedTextColor.YELLOW));
 

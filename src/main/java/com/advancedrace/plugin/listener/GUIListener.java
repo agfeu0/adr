@@ -109,7 +109,7 @@ public class GUIListener implements Listener {
             }
 
             player.sendMessage(ChatColor.GREEN + "✓ " + streamerName + " 팀에 합류했습니다!");
-            player.sendMessage(ChatColor.YELLOW + "팀장이 발전과제를 달성하면 게임에 소환됩니다!");
+            player.sendMessage(ChatColor.YELLOW + "스트리머가 발전과제를 달성하면 게임에 소환됩니다!");
 
             player.closeInventory();
         } else {

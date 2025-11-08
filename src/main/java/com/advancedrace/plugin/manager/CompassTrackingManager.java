@@ -63,13 +63,13 @@ public class CompassTrackingManager {
                     // 팀장 위치로 로드스톤 설정 (계속 업데이트)
                     meta.setLodestone(streamer.getLocation());
                     meta.setLodestoneTracked(false); // 블록 없이도 방향만 가리킴
-                    meta.setDisplayName("§b" + streamerName + " 팀장");
+                    meta.setDisplayName("§b스트리머 " + streamerName);
                     compass.setItemMeta(meta);
 
                     // 다른 월드에 있으면 액션바 표시
                     if (!player.getWorld().getName().equals(streamer.getWorld().getName())) {
                         String worldName = getWorldNameKorean(streamer.getWorld().getName());
-                        player.sendActionBar("§e팀장이 " + worldName + "에 있습니다");
+                        player.sendActionBar("§e스트리머가 " + worldName + "에 있습니다");
                     }
                 }
             }
