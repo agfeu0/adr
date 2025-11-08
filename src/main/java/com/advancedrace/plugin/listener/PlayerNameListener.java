@@ -29,48 +29,54 @@ public class PlayerNameListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        // 게임 진행 중이면 스트리머가 아닌 모든 플레이어를 스펙테이터로 설정
-        if (AdvancedRace.getInstance().getGameStateManager().isRunning()) {
-            boolean isStreamer = false;
-            for (String streamerName : teamManager.getStreamerNames()) {
-                if (streamerName.equals(player.getName())) {
-                    isStreamer = true;
-                    break;
-                }
-            }
-
-            if (!isStreamer) {
-                player.setGameMode(GameMode.SPECTATOR);
-                player.sendMessage("§e게임이 진행 중입니다. 스펙테이터 모드로 입장합니다.");
+        // 게임 진행 중에 재입장하는 경우 처리
+        boolean isStreamer = false;
+        for (String streamerName : teamManager.getStreamerNames()) {
+            if (streamerName.equals(player.getName())) {
+                isStreamer = true;
+                break;
             }
         }
 
-        // 저장된 팀 정보 확인 및 자동 추가
-        String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
-        if (streamerName != null) {
-            TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
-            if (team != null) {
-                // 게임이 진행 중이 아니면 평상시 복원
-                if (!AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+        if (AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+            // 저장된 팀 정보 확인
+            String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
+            int savedSpawnTier = 0;
+
+            if (streamerName != null) {
+                savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
+            }
+
+            // 소환된 시청자(SpawnTier == 2)는 서바이벌로 입장
+            if (savedSpawnTier == 2) {
+                TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+                if (team != null) {
+                    teamManager.addPlayerToTeam(player, streamerName);
+                    teamManager.setSpawnTier(player, 2);
+                    player.setGameMode(GameMode.SURVIVAL);
+
+                    // 스트리머 위치로 텔레포트
+                    Player streamer = Bukkit.getPlayer(streamerName);
+                    if (streamer != null && streamer.isOnline()) {
+                        player.teleport(streamer.getLocation());
+                        player.sendMessage("§a" + streamerName + " 스트리머 위치로 텔레포트되었습니다!");
+                    }
+                }
+            } else if (!isStreamer) {
+                // 소환된 시청자가 아니고 스트리머도 아니면 스펙테이터
+                player.setGameMode(GameMode.SPECTATOR);
+                player.sendMessage("§e게임이 진행 중입니다. 스펙테이터 모드로 입장합니다.");
+            }
+        } else {
+            // 게임이 진행 중이 아닐 때 팀 정보 복원
+            String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
+            if (streamerName != null) {
+                TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
+                if (team != null) {
                     teamManager.addPlayerToTeam(player, streamerName);
                     // 저장된 SpawnTier 복원 (소환 상태 유지)
                     int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
                     teamManager.setSpawnTier(player, savedSpawnTier);
-                } else {
-                    // 게임이 진행 중이면 소환된 시청자만 팀에 다시 추가하고 텔레포트
-                    int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
-                    if (savedSpawnTier == 2) {
-                        // 소환된 시청자: 팀에 다시 추가
-                        teamManager.addPlayerToTeam(player, streamerName);
-                        teamManager.setSpawnTier(player, 2);
-
-                        // 스트리머 위치로 텔레포트
-                        Player streamer = Bukkit.getPlayer(streamerName);
-                        if (streamer != null && streamer.isOnline()) {
-                            player.teleport(streamer.getLocation());
-                            player.sendMessage("§a" + streamerName + " 스트리머 위치로 텔레포트되었습니다!");
-                        }
-                    }
                 }
             }
         }
