@@ -9,6 +9,7 @@ import com.advancedrace.plugin.task.GameTimerTask;
 import com.advancedrace.plugin.util.SafeTeleporter;
 import com.advancedrace.plugin.util.ScoreboardManager;
 import com.advancedrace.plugin.util.TablistManager;
+import com.advancedrace.plugin.util.ViewerInitializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -83,13 +84,15 @@ public class GameStartCommand implements CommandExecutor {
             onlinePlayer.getInventory().clear();
         }
 
-        // 모든 팀의 플레이어에 대해 SpawnTier 초기화
+        // 모든 팀의 플레이어에 대해 SpawnTier 초기화 및 베리어 설정
         for (String streamerName : teamManager.getStreamerNames()) {
             TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
             if (team != null) {
                 for (org.bukkit.entity.Player teamPlayer : team.getPlayers()) {
                     if (teamPlayer.isOnline()) {
                         teamManager.setSpawnTier(teamPlayer, 1);
+                        // 시청자에게 베리어 설정 (인벤토리 5칸 제한)
+                        ViewerInitializer.initializeViewer(teamPlayer);
                     }
                 }
             }
