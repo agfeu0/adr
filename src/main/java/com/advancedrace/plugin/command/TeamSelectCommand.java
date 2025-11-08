@@ -38,25 +38,10 @@ public class TeamSelectCommand implements CommandExecutor {
             return false;
         }
 
-        // 소환된 시청자 (SpawnTier가 2)는 스펙테이터 모드가 아니면 사용 불가
-        if (teamManager.getSpawnTier(player) == 2 && !teamManager.isSpectatorWithChance(player)) {
-            player.sendMessage(ChatColor.RED + "사망 후 스펙테이터 모드에서만 팀을 변경할 수 있습니다.");
+        // 이미 팀에 속해있으면 팀 변경 불가
+        if (teamManager.getTeam(player) != null) {
+            player.sendMessage(ChatColor.RED + "이미 팀에 속해있습니다. 팀을 변경할 수 없습니다.");
             return false;
-        }
-
-        // 사망 횟수가 2회 이상이면서 스펙테이터 상태가 아니면 팀 선택 불가
-        if (teamManager.getDeathCount(player) >= 2 && !teamManager.isSpectatorWithChance(player)) {
-            player.sendMessage(ChatColor.RED + "더 이상 팀변경은 불가능 합니다.");
-            return false;
-        }
-
-        // 스펙테이터 상태에서 팀 변경 시 (팀 변경 기회 소모)
-        if (teamManager.isSpectatorWithChance(player)) {
-            teamManager.removeFromSpectator(player);
-            // 팀에서 제거하여 다시 대기 상태로 만듦
-            if (teamManager.getPlayerTeam(player) != null) {
-                teamManager.removePlayer(player);
-            }
         }
 
         // 팀 선택 GUI 열기
