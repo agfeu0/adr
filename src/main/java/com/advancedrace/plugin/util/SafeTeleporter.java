@@ -56,37 +56,20 @@ public class SafeTeleporter {
             int blockX = (int) randomX;
             int blockZ = (int) randomZ;
 
-            // 청크가 로드되지 않았으면 건너뛰기
-            if (!world.isChunkLoaded(blockX >> 4, blockZ >> 4)) {
-                continue;
-            }
-
-            // 안전한 높이 찾기 (y=150부터 y=120까지 탐색 - 높은 지표면, 동굴 제외)
-            for (int y = 150; y >= 120; y--) {
+            // 안전한 높이 찾기 (y=256부터 y=0까지 탐색 - 높은 곳부터)
+            for (int y = 256; y >= 0; y--) {
                 Block footBlock = world.getBlockAt(blockX, y - 1, blockZ);
                 Block bodyBlock = world.getBlockAt(blockX, y, blockZ);
                 Block headBlock = world.getBlockAt(blockX, y + 1, blockZ);
 
-                // 안전한 블록인지 확인
+                // 안전한 블록인지 확인 (발, 몸, 머리가 모두 통과 가능)
                 if (isSafeBlock(footBlock) && isSafeBlock(bodyBlock) && isSafeBlock(headBlock)) {
-                    // 발 아래는 실제 고체 블록이 있어야 함 (동굴 제외)
+                    // 발 아래는 고체 블록이 있어야 함
                     Block groundBlock = world.getBlockAt(blockX, y - 2, blockZ);
-                    if (!groundBlock.isPassable() && isGroundBlock(groundBlock)) {
-                        // Y좌표 위에서 실제 고체 블록이 있는지 확인 (동굴 내부 제외)
-                        boolean hasSolidBlockAbove = false;
-                        for (int checkY = y + 2; checkY <= y + 40; checkY++) {
-                            Block checkBlock = world.getBlockAt(blockX, checkY, blockZ);
-                            if (!checkBlock.isPassable() && !checkBlock.getType().equals(Material.WATER) && !checkBlock.getType().equals(Material.LAVA)) {
-                                hasSolidBlockAbove = true;
-                                break;
-                            }
-                        }
-
-                        if (hasSolidBlockAbove) {
-                            Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
-                            player.teleport(safeLocation);
-                            return true;
-                        }
+                    if (!groundBlock.isPassable()) {
+                        Location safeLocation = new Location(world, randomX + 0.5, y, randomZ + 0.5);
+                        player.teleport(safeLocation);
+                        return true;
                     }
                 }
             }
@@ -112,27 +95,5 @@ public class SafeTeleporter {
         return false;
     }
 
-    /**
-     * 블록이 지면으로 사용될 수 있는지 확인 (잔디, 눈, 얼음, 나뭇잎)
-     */
-    private static boolean isGroundBlock(Block block) {
-        Material type = block.getType();
-
-        // 잔디, 눈, 얼음, 나뭇잎 허용
-        return type == Material.GRASS_BLOCK ||
-               type == Material.SNOW_BLOCK ||
-               type == Material.SNOW ||
-               type == Material.ICE ||
-               type == Material.PACKED_ICE ||
-               type == Material.OAK_LEAVES ||
-               type == Material.SPRUCE_LEAVES ||
-               type == Material.BIRCH_LEAVES ||
-               type == Material.JUNGLE_LEAVES ||
-               type == Material.ACACIA_LEAVES ||
-               type == Material.DARK_OAK_LEAVES ||
-               type == Material.MANGROVE_LEAVES ||
-               type == Material.CHERRY_LEAVES ||
-               type == Material.AZALEA_LEAVES;
-    }
 
 }
