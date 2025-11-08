@@ -84,19 +84,21 @@ public class ViewerSummonManager {
             // 팀장을 가리키는 나침반 지급
             ViewerInitializer.updateCompass(viewer, streamerName);
 
-            // 스코어보드 설정 및 시청자 수 업데이트
-            com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
-            com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
-
             viewer.sendMessage("§a✓ 게임에 소환되었습니다!");
 
-            // 네임태그 색상 적용 (스코어보드 설정 완료 후 지연으로 재적용)
+            // 스코어보드 설정 및 네임태그 색상 적용 (높은 지연으로 모든 초기화 완료 후)
             Plugin plugin = Bukkit.getPluginManager().getPlugin("AdvancedRace");
             if (plugin != null) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    // 스코어보드 설정
+                    com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
+                    com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
+                    // 네임태그 색상 적용
                     PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
-                }, 5);
+                }, 10);
             } else {
+                com.advancedrace.plugin.util.ScoreboardManager.setupScoreboard(viewer, teamManager);
+                com.advancedrace.plugin.util.ScoreboardManager.updateViewerCount(viewer, team.getPlayerCount());
                 PlayerNameListener.updatePlayerDisplay(viewer, teamManager);
             }
 
