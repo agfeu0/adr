@@ -6,5 +6,5 @@ game-duration-seconds: 18000
 
 # 랜덤 텔레포트 범위 설정 (블록 단위)
 # 게임 시작 시 스트리머가 텔레포트될 랜덤 범위
-# 기본값: 1500블록 (±1500)
-random-teleport-range: 1500
+# 기본값: 750블록 (±750)
+random-teleport-range: 750
