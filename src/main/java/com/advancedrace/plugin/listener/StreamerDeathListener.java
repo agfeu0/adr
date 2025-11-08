@@ -3,21 +3,28 @@ package com.advancedrace.plugin.listener;
 import com.advancedrace.plugin.manager.TeamManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class StreamerDeathListener implements Listener {
 
     private TeamManager teamManager;
     private Random random = new Random();
+    private Map<String, Location> streamerDeathLocations = new HashMap<>();
+    private Map<String, BukkitTask> streamerBoundaryTasks = new HashMap<>();
 
     public StreamerDeathListener(TeamManager teamManager) {
         this.teamManager = teamManager;
@@ -59,8 +66,8 @@ public class StreamerDeathListener implements Listener {
             // 스트리머의 모든 포션 효과 제거 (혹시 있을 수 있는 영향 제거)
             deadPlayer.getActivePotionEffects().forEach(effect -> deadPlayer.removePotionEffect(effect.getType()));
         } else {
-            // 시청자가 없으면 스트리머를 3분간 행동 불가 상태로
-            applyInactionMode(deadPlayer);
+            // 시청자가 없으면 스트리머를 3분간 관전 모드로 (5칸 범위 제한)
+            applySpectatorMode(deadPlayer);
         }
     }
 
@@ -76,40 +83,76 @@ public class StreamerDeathListener implements Listener {
     }
 
     /**
-     * 스트리머를 3분간 행동 불가 상태로 설정
+     * 스트리머를 3분간 관전 모드로 설정 (5칸 범위 제한)
      */
-    private void applyInactionMode(Player streamer) {
+    private void applySpectatorMode(Player streamer) {
         String streamerName = streamer.getName();
-        // 3분 = 3600틱
-        int duration = 3600;
 
-        // Mining Fatigue 255 (채광 불가)
-        streamer.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, duration, 254, false, false), true);
+        // 사망 위치 저장
+        Location deathLocation = streamer.getLocation();
+        streamerDeathLocations.put(streamerName, deathLocation.clone());
 
-        // Slowness 255 (이동 불가)
-        streamer.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, duration, 254, false, false), true);
-
-        // Jump Boost 255 (점프 불가 - 점프 높이 제거)
-        streamer.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, 254, false, false), true);
+        // 관전 모드 전환
+        streamer.setGameMode(GameMode.SPECTATOR);
+        streamer.removePotionEffect(PotionEffectType.DARKNESS);
 
         // 메시지
-        Bukkit.broadcastMessage(ChatColor.RED + streamer.getName() + "님의 팀에 시청자가 없어서 3분간 행동 불가 상태가 되었습니다.");
-        streamer.sendMessage(ChatColor.YELLOW + "3분 후 행동 가능!");
+        Bukkit.broadcastMessage(ChatColor.RED + streamer.getName() + "님의 팀에 시청자가 없어서 3분간 관전 모드가 되었습니다.");
+        streamer.sendMessage(ChatColor.YELLOW + "죽은 위치에서 5칸 범위를 벗어나면 자동으로 돌아옵니다.");
+        streamer.sendMessage(ChatColor.YELLOW + "3분 후 서바이벌 모드로 복구됩니다!");
 
-        // 3분 후 포션 효과 제거
+        // 경계 체크 태스크 시작 (3초마다, 60틱)
+        BukkitTask boundaryTask = Bukkit.getScheduler().runTaskTimer(
+                Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                () -> {
+                    if (!streamer.isOnline() || streamer.getGameMode() != GameMode.SPECTATOR) {
+                        // 스트리머가 오프라인이거나 스펙테이터가 아니면 태스크 취소
+                        if (streamerBoundaryTasks.containsKey(streamerName)) {
+                            streamerBoundaryTasks.get(streamerName).cancel();
+                            streamerBoundaryTasks.remove(streamerName);
+                        }
+                        return;
+                    }
+
+                    Location currentLocation = streamer.getLocation();
+                    Location deathLoc = streamerDeathLocations.get(streamerName);
+
+                    if (deathLoc != null && currentLocation.distance(deathLoc) > 5) {
+                        // 5칸을 벗어났으면 사망 위치로 텔레포트
+                        streamer.teleport(deathLoc);
+                        streamer.sendMessage(ChatColor.RED + "죽은 위치에서 5칸을 벗어났습니다. 되돌려집니다.");
+                    }
+                },
+                60L, // 초기 딜레이
+                60L  // 반복 간격 (3초)
+        );
+        streamerBoundaryTasks.put(streamerName, boundaryTask);
+
+        // 3분 후 (3600틱) 서바이벌 모드로 복구
         Bukkit.getScheduler().scheduleSyncDelayedTask(
                 Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                 () -> {
                     if (streamer.isOnline()) {
-                        // Mining Fatigue, Slowness, Jump Boost 제거
-                        streamer.removePotionEffect(PotionEffectType.MINING_FATIGUE);
-                        streamer.removePotionEffect(PotionEffectType.SLOWNESS);
-                        streamer.removePotionEffect(PotionEffectType.JUMP_BOOST);
+                        // 서바이벌 모드로 복구
+                        streamer.setGameMode(GameMode.SURVIVAL);
+
+                        // 저항 1 적용 (10초 = 200틱)
+                        streamer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 200, 0, false, false), true);
 
                         streamer.sendMessage(ChatColor.GREEN + "✓ 행동 불가 상태가 해제되었습니다!");
+                        streamer.sendMessage(ChatColor.YELLOW + "10초간 저항 1 상태입니다.");
                     }
+
+                    // 경계 체크 태스크 취소
+                    if (streamerBoundaryTasks.containsKey(streamerName)) {
+                        streamerBoundaryTasks.get(streamerName).cancel();
+                        streamerBoundaryTasks.remove(streamerName);
+                    }
+
+                    // 사망 위치 정보 제거
+                    streamerDeathLocations.remove(streamerName);
                 },
-                duration
+                3600 // 3분 = 3600틱
         );
     }
 
