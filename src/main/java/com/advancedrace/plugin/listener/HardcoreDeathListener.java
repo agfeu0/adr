@@ -10,10 +10,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HardcoreDeathListener implements Listener {
 
     private TeamManager teamManager;
+    private Map<String, BukkitTask> viewerFollowTasks = new HashMap<>();
 
     public HardcoreDeathListener(TeamManager teamManager) {
         this.teamManager = teamManager;
@@ -72,15 +77,66 @@ public class HardcoreDeathListener implements Listener {
             // SpawnTier를 1로 설정 (대기 중, 발전과제로 다시 소환 가능)
             teamManager.setSpawnTier(deadPlayer, 1);
 
-            // 1초 후 스펙테이터 모드로 전환
+            // 1초 후 스펙테이터 모드로 전환 및 스트리머 추적 시작
             Bukkit.getScheduler().scheduleSyncDelayedTask(
                     Bukkit.getPluginManager().getPlugin("AdvancedRace"),
                     () -> {
                         deadPlayer.setGameMode(GameMode.SPECTATOR);
+                        // 스트리머 추적 시작
+                        startFollowingStreamer(deadPlayer, team);
                     },
                     20 // 1초 = 20틱
             );
         }
+    }
+
+    /**
+     * 시청자가 스트리머를 따라다니도록 설정 (2칸 이상 못 벗어남)
+     */
+    private void startFollowingStreamer(Player viewer, TeamManager.Team team) {
+        String playerName = viewer.getName();
+        String streamerName = team.getStreamer();
+
+        // 기존 추적 태스크 취소
+        if (viewerFollowTasks.containsKey(playerName)) {
+            viewerFollowTasks.get(playerName).cancel();
+        }
+
+        // 스트리머 추적 태스크 시작 (1틱마다)
+        BukkitTask followTask = Bukkit.getScheduler().runTaskTimer(
+                Bukkit.getPluginManager().getPlugin("AdvancedRace"),
+                () -> {
+                    if (!viewer.isOnline() || viewer.getGameMode() != GameMode.SPECTATOR) {
+                        // 온라인이 아니거나 스펙테이터가 아니면 태스크 취소
+                        if (viewerFollowTasks.containsKey(playerName)) {
+                            viewerFollowTasks.get(playerName).cancel();
+                            viewerFollowTasks.remove(playerName);
+                        }
+                        return;
+                    }
+
+                    // 스트리머 찾기
+                    Player streamer = Bukkit.getPlayer(streamerName);
+                    if (streamer != null && streamer.isOnline()) {
+                        double distance = viewer.getLocation().distance(streamer.getLocation());
+
+                        // 2칸 이상 멀어지면 스트리머 위치로 텔레포트
+                        if (distance > 2) {
+                            viewer.teleport(streamer.getLocation());
+                        }
+                    } else {
+                        // 스트리머가 오프라인이면 태스크 취소
+                        if (viewerFollowTasks.containsKey(playerName)) {
+                            viewerFollowTasks.get(playerName).cancel();
+                            viewerFollowTasks.remove(playerName);
+                        }
+                    }
+                },
+                0L,  // 초기 딜레이 없음
+                1L   // 매 틱마다 실행
+        );
+
+        viewerFollowTasks.put(playerName, followTask);
     }
 
     private boolean isStreamer(Player player) {
