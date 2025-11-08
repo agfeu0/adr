@@ -45,16 +45,33 @@ public class PlayerNameListener implements Listener {
             }
         }
 
-        // 저장된 팀 정보 확인 및 자동 추가 (게임 진행 중이 아닐 때만)
+        // 저장된 팀 정보 확인 및 자동 추가
         String streamerName = DataPersistence.getStreamerForPlayer(player.getName());
-        if (streamerName != null && !AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+        if (streamerName != null) {
             TeamManager.Team team = teamManager.getTeamByStreamer(streamerName);
             if (team != null) {
-                // 팀에 추가
-                teamManager.addPlayerToTeam(player, streamerName);
-                // 저장된 SpawnTier 복원 (소환 상태 유지)
-                int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
-                teamManager.setSpawnTier(player, savedSpawnTier);
+                // 게임이 진행 중이 아니면 평상시 복원
+                if (!AdvancedRace.getInstance().getGameStateManager().isRunning()) {
+                    teamManager.addPlayerToTeam(player, streamerName);
+                    // 저장된 SpawnTier 복원 (소환 상태 유지)
+                    int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
+                    teamManager.setSpawnTier(player, savedSpawnTier);
+                } else {
+                    // 게임이 진행 중이면 소환된 시청자만 팀에 다시 추가하고 텔레포트
+                    int savedSpawnTier = DataPersistence.getPlayerSpawnTier(player.getName());
+                    if (savedSpawnTier == 2) {
+                        // 소환된 시청자: 팀에 다시 추가
+                        teamManager.addPlayerToTeam(player, streamerName);
+                        teamManager.setSpawnTier(player, 2);
+
+                        // 스트리머 위치로 텔레포트
+                        Player streamer = Bukkit.getPlayer(streamerName);
+                        if (streamer != null && streamer.isOnline()) {
+                            player.teleport(streamer.getLocation());
+                            player.sendMessage("§a" + streamerName + " 스트리머 위치로 텔레포트되었습니다!");
+                        }
+                    }
+                }
             }
         }
 
