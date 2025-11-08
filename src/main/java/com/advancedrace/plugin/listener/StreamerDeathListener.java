@@ -167,11 +167,11 @@ public class StreamerDeathListener implements Listener {
                         // 서바이벌 모드로 복구
                         streamer.setGameMode(GameMode.SURVIVAL);
 
-                        // 저항 1 적용 (10초 = 200틱)
-                        streamer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 200, 0, false, false), true);
+                        // 저항 5 적용 (10초 = 200틱)
+                        streamer.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 200, 4, false, false), true);
 
                         streamer.sendMessage(ChatColor.GREEN + "✓ 행동 불가 상태가 해제되었습니다!");
-                        streamer.sendMessage(ChatColor.YELLOW + "10초간 저항 1 상태입니다.");
+                        streamer.sendMessage(ChatColor.YELLOW + "10초간 저항 5 상태입니다.");
                     }
 
                     // 움직임 방지 태스크 취소
