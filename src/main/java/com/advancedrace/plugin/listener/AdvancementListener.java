@@ -95,8 +95,8 @@ public class AdvancementListener implements Listener {
         }
 
         // Display 정보로 일반/특수 구분
-        int summonCount = 3; // 기본값: 3명
-        int scorePoints = 3; // 기본값: 3점
+        int summonCount = 1; // 기본값: 일반 = 1명
+        int scorePoints = 1; // 기본값: 일반 = 1점
         AdvancementDisplay display = advancement.getDisplay();
         boolean isChallenge = false;
 
@@ -104,6 +104,8 @@ public class AdvancementListener implements Listener {
         // 마인크래프트 공식 Challenge 발전과제 목록
         if (isChallengeAdvancement(advancementName)) {
             isChallenge = true;
+            summonCount = 3; // Challenge = 3명
+            scorePoints = 3; // Challenge = 3점
             org.bukkit.Bukkit.getLogger().info("[AdvancedRace] Challenge 발전과제 감지: " + advancementName);
         }
 
