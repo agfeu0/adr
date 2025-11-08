@@ -105,30 +105,13 @@ public class SafeTeleporter {
     }
 
     /**
-     * 블록이 지면으로 사용될 수 있는지 확인 (동굴 제외)
+     * 블록이 지면으로 사용될 수 있는지 확인 (잔디만)
      */
     private static boolean isGroundBlock(Block block) {
         Material type = block.getType();
 
-        // 안전한 지면 블록 (흙, 잔디, 돌, 규사, 자갈 등)
-        return type == Material.GRASS_BLOCK ||
-               type == Material.DIRT ||
-               type == Material.DIRT_PATH ||
-               type == Material.COARSE_DIRT ||
-               type == Material.STONE ||
-               type == Material.SAND ||
-               type == Material.RED_SAND ||
-               type == Material.GRAVEL ||
-               type == Material.ROOTED_DIRT ||
-               type == Material.MUD ||
-               type == Material.OAK_LOG ||
-               type == Material.SPRUCE_LOG ||
-               type == Material.BIRCH_LOG ||
-               type == Material.JUNGLE_LOG ||
-               type == Material.ACACIA_LOG ||
-               type == Material.DARK_OAK_LOG ||
-               type == Material.MANGROVE_LOG ||
-               type == Material.CHERRY_LOG;
+        // 잔디 블록만 허용
+        return type == Material.GRASS_BLOCK;
     }
 
 }
